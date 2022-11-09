@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -43,11 +42,11 @@
             </intent-filter>
         </activity>
 
-        <service
+        <!--<service
             android:name="MapsActivity"
             android:foregroundServiceType="location" >
-        <!-- Any inner elements would go here. -->
-    </service>
+        </service>-->
+        <uses-library android:name="org.apache.http.legacy" android:required="false" />
     </application>
 
 </manifest>
