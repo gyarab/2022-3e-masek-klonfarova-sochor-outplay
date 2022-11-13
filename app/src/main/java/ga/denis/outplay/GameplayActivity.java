@@ -1,15 +1,15 @@
 package ga.denis.outplay;
 
-import androidx.annotation.NonNull;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.os.Bundle;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Bundle;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -21,41 +21,29 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import android.Manifest;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
+import ga.denis.outplay.databinding.ActivityGameplayBinding;
 import ga.denis.outplay.databinding.ActivityMapsBinding;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
+public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
+    private ActivityGameplayBinding binding;
     private FusedLocationProviderClient fusedLocationClient;
-    Button startButton;
-    Marker poly1;
-    Marker poly2;
-    Marker poly3;
-    Marker poly4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        binding = ActivityGameplayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        startButton = (Button) findViewById(R.id.startButton);
-        startButton.setOnClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.gameplay);
         mapFragment.getMapAsync(this);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -108,39 +96,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 LatLng pozice = new LatLng(location.getLatitude(),location.getLongitude());
                                 CameraPosition position = new CameraPosition.Builder().
                                         target(pozice).
-                                        tilt(0).
+                                        tilt(60).
                                         zoom(19).
-                                        bearing(0).
+                                        bearing(location.getBearing()).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
                                 mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true));
-                                poly1 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
-                                poly2 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
-                                poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
-                                poly4 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
-                                CameraPosition cameraPosition = new CameraPosition.Builder().
-                                        target(pozice).
-                                        tilt(0).
-                                        zoom(18).
-                                        bearing(0).
-                                        build();
-                                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                                    @Override
-                                    public void onMarkerDrag(@NonNull Marker marker) {
-
-                                    }
-
-                                    @Override
-                                    public void onMarkerDragEnd(@NonNull Marker marker) {
-                                        marker.setPosition(marker.getPosition());
-                                    }
-
-                                    @Override
-                                    public void onMarkerDragStart(@NonNull Marker marker) {
-
-                                    }
-                                });
+                                mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly4"), getIntent().getExtras().getParcelable("poly3")));
                             }
                         }
                     });
@@ -151,15 +113,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
 
-    }
-
-    @Override
-    public void onClick(View view) {
-        Intent intent = new Intent(MapsActivity.this, GameplayActivity.class);
-        intent.putExtra("poly1", poly1.getPosition());
-        intent.putExtra("poly2", poly2.getPosition());
-        intent.putExtra("poly3", poly3.getPosition());
-        intent.putExtra("poly4", poly4.getPosition());
-        startActivity(intent);
     }
 }
