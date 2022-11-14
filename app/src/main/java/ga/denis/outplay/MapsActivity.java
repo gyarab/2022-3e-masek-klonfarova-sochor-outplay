@@ -113,11 +113,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         bearing(0).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-                                mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true));
-                                poly1 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
-                                poly2 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
-                                poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
-                                poly4 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true));
+                                mMap.setOnMarkerClickListener(marker -> true);
+                                mMap.addMarker(new MarkerOptions().position(pozice)/*.title("Current position")*/.icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f));
+                                poly1 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
+                                poly2 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
+                                poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
+                                poly4 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
                                 CameraPosition cameraPosition = new CameraPosition.Builder().
                                         target(pozice).
                                         tilt(0).

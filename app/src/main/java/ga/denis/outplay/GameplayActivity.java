@@ -6,12 +6,16 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +25,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,6 +38,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private ActivityGameplayBinding binding;
     private FusedLocationProviderClient fusedLocationClient;
+    private Marker me;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +104,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         target(pozice).
                                         tilt(60).
                                         zoom(19).
-                                        bearing(location.getBearing()).
+                                        bearing(0).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-                                mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true));
+                                me = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f));
                                 mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly4"), getIntent().getExtras().getParcelable("poly3")));
                             }
                         }
@@ -112,6 +118,15 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             // The registered ActivityResultCallback gets the result of this request.
                     ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
-
+        fusedLocationClient.requestLocationUpdates(new LocationRequest(),new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                if (locationResult == null) return;
+                else {
+                    me.setPosition(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
+                }
+            }
+        }, Looper.getMainLooper());
     }
 }
