@@ -6,7 +6,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -39,6 +41,8 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     private ActivityGameplayBinding binding;
     private FusedLocationProviderClient fusedLocationClient;
     private Marker me;
+    private boolean f = false;
+    TextView bearing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
         binding = ActivityGameplayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        bearing = (TextView) findViewById(R.id.textView);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
@@ -109,6 +115,27 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
                                 me = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f));
                                 mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly4"), getIntent().getExtras().getParcelable("poly3")));
+
+
+
+                                final Handler handler = new Handler();
+                                Runnable runnable = new Runnable() {
+                                    public void run() {
+                                        if (f) {
+                                            me.setIcon(BitmapDescriptorFactory.fromAsset("kamera.bmp"));
+                                            f = false;
+                                        } else {
+                                            me.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
+                                            f = true;
+                                        }
+
+                                        bearing.setText(String.valueOf(mMap.getCameraPosition().tilt));
+                                        //System.out.println(String.valueOf(mMap.getCameraPosition().bearing));
+
+                                        handler.postDelayed(this, 1000);
+                                    }
+                                };
+                                runnable.run();
                             }
                         }
                     });
