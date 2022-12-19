@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -33,7 +34,6 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
-import ga.denis.outplay.databinding.ActivityMapsBinding;
 
 public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -105,6 +105,22 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
+                                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                                    @Override
+                                    public void onMarkerDrag(@NonNull Marker marker) {
+
+                                    }
+
+                                    @Override
+                                    public void onMarkerDragEnd(@NonNull Marker marker) {
+                                        marker.setPosition(marker.getPosition());
+                                    }
+
+                                    @Override
+                                    public void onMarkerDragStart(@NonNull Marker marker) {
+
+                                    }
+                                });
                                 LatLng pozice = new LatLng(location.getLatitude(),location.getLongitude());
                                 CameraPosition position = new CameraPosition.Builder().
                                         target(pozice).
@@ -113,10 +129,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         bearing(0).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-                                me = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f));
+                                me = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
                                 mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly4"), getIntent().getExtras().getParcelable("poly3")));
 
-
+                                Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 
                                 final Handler handler = new Handler();
                                 Runnable runnable = new Runnable() {
@@ -131,6 +147,8 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                                         bearing.setText(String.valueOf(mMap.getCameraPosition().tilt));
                                         //System.out.println(String.valueOf(mMap.getCameraPosition().bearing));
+
+                                        test.inside();
 
                                         handler.postDelayed(this, 1000);
                                     }
