@@ -28,7 +28,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import android.Manifest;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import ga.denis.outplay.databinding.ActivityMapsBinding;
 
@@ -117,8 +118,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mMap.addMarker(new MarkerOptions().position(pozice)/*.title("Current position")*/.icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f));
                                 poly1 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
                                 poly2 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
-                                poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
-                                poly4 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
+                                poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
+                                poly4 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
                                 CameraPosition cameraPosition = new CameraPosition.Builder().
                                         target(pozice).
                                         tilt(0).
@@ -157,10 +158,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(MapsActivity.this, GameplayActivity.class);
+        ArrayList<Checkpoint> list = new ArrayList();
+        ArrayList<LatLng> lokace = new ArrayList<>();
+        list.add(new Checkpoint(mMap,poly1.getPosition(),null));
+        list.add(new Checkpoint(mMap,poly3.getPosition(),null));
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 40d, 40d, null));
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 90d, 90d, null));
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 80d, null));
+        for (Checkpoint checkpoint : list) {
+            lokace.add(checkpoint.getLocation());
+        }
         intent.putExtra("poly1", poly1.getPosition());
         intent.putExtra("poly2", poly2.getPosition());
         intent.putExtra("poly3", poly3.getPosition());
         intent.putExtra("poly4", poly4.getPosition());
+        intent.putExtra("checkLoc", lokace);
         startActivity(intent);
     }
 }

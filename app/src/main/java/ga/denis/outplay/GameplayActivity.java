@@ -33,6 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
 
 public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -40,9 +42,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private ActivityGameplayBinding binding;
     private FusedLocationProviderClient fusedLocationClient;
-    private Marker me;
+    private Marker hrac;
     private boolean f = false;
     TextView bearing;
+    ArrayList<Checkpoint> checkList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +54,11 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
         binding = ActivityGameplayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        bearing = (TextView) findViewById(R.id.textView);
+        bearing = (TextView) findViewById(R.id.gameplayTextView);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
-                .findFragmentById(R.id.gameplay);
+                .findFragmentById(R.id.Gameplay);
         mapFragment.getMapAsync(this);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -114,6 +117,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                     @Override
                                     public void onMarkerDragEnd(@NonNull Marker marker) {
                                         marker.setPosition(marker.getPosition());
+
                                     }
 
                                     @Override
@@ -129,26 +133,32 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         bearing(0).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-                                me = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
-                                mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly4"), getIntent().getExtras().getParcelable("poly3")));
+                                hrac = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
+                                mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly3"), getIntent().getExtras().getParcelable("poly4")));
 
-                                Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
+                                ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
+                                for (LatLng latLng : tempList) {
+                                    checkList.add(new Checkpoint(mMap, latLng, hrac));
+                                }
+                                //Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 
                                 final Handler handler = new Handler();
                                 Runnable runnable = new Runnable() {
                                     public void run() {
                                         if (f) {
-                                            me.setIcon(BitmapDescriptorFactory.fromAsset("kamera.bmp"));
+                                            hrac.setIcon(BitmapDescriptorFactory.fromAsset("kamera.bmp"));
                                             f = false;
                                         } else {
-                                            me.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
+                                            hrac.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
                                             f = true;
                                         }
 
                                         bearing.setText(String.valueOf(mMap.getCameraPosition().tilt));
                                         //System.out.println(String.valueOf(mMap.getCameraPosition().bearing));
 
-                                        test.inside();
+                                        for (Checkpoint checkpoint : checkList) {
+                                            checkpoint.inside();
+                                        }
 
                                         handler.postDelayed(this, 1000);
                                     }
@@ -169,7 +179,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                 super.onLocationResult(locationResult);
                 if (locationResult == null) return;
                 else {
-                    me.setPosition(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
+                    hrac.setPosition(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
                 }
             }
         }, Looper.getMainLooper());
