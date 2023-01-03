@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bazinova">#607522</color>
+    <color name="nazelenava">#DDF791</color>
+    <color name="zelena">#C9F547</color>
+    <color name="travnata">#9FC238</color>
+    <color name="opravduzelena">#617527</color>
 </resources>
