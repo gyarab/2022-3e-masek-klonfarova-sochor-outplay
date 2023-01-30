@@ -173,7 +173,13 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             // The registered ActivityResultCallback gets the result of this request.
                     ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
-        fusedLocationClient.requestLocationUpdates(new LocationRequest(),new LocationCallback() {
+
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setSmallestDisplacement(1);
+        locationRequest.setInterval(2000);
+        locationRequest.setFastestInterval(1000);
+
+        fusedLocationClient.requestLocationUpdates(locationRequest,new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
@@ -183,5 +189,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                 }
             }
         }, Looper.getMainLooper());
+
     }
 }

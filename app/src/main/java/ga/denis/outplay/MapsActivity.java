@@ -160,11 +160,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = new Intent(MapsActivity.this, GameplayActivity.class);
         ArrayList<Checkpoint> list = new ArrayList();
         ArrayList<LatLng> lokace = new ArrayList<>();
-        list.add(new Checkpoint(mMap,poly1.getPosition(),null));
-        list.add(new Checkpoint(mMap,poly3.getPosition(),null));
-        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 40d, 40d, null));
-        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 90d, 90d, null));
-        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 80d, null));
+        //list.add(new Checkpoint(mMap,poly1.getPosition(),null));
+        //list.add(new Checkpoint(mMap,poly3.getPosition(),null));
+        //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 40d, 40d, null));
+        //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 90d, 90d, null));
+        //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 80d, null));
+        //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 0d, null));
+        //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 100d, null));
+        //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 0d, null));
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 100d, null));
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 30d, 10d, null));
         for (Checkpoint checkpoint : list) {
             lokace.add(checkpoint.getLocation());
         }
