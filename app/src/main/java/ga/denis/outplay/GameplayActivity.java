@@ -1,12 +1,12 @@
 package ga.denis.outplay;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.widget.TextView;
 
@@ -46,6 +46,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     private boolean f = false;
     TextView bearing;
     ArrayList<Checkpoint> checkList = new ArrayList<>();
+    Location previous = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,8 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
         MapStyleOptions mapStyleOptions = MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json);
         mMap.setMapStyle(mapStyleOptions);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setZoomGesturesEnabled(false);
 
         if (ContextCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -133,37 +136,37 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         bearing(0).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-                                hrac = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
+                                hrac = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("player.bmp")).flat(true).anchor(0.5f,0.5f));
                                 mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly3"), getIntent().getExtras().getParcelable("poly4")));
 
                                 ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
                                 for (LatLng latLng : tempList) {
-                                    checkList.add(new Checkpoint(mMap, latLng, hrac));
+                                    checkList.add(new Checkpoint(mMap, latLng));
                                 }
                                 //Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 
-                                final Handler handler = new Handler();
-                                Runnable runnable = new Runnable() {
-                                    public void run() {
-                                        if (f) {
-                                            hrac.setIcon(BitmapDescriptorFactory.fromAsset("kamera.bmp"));
-                                            f = false;
-                                        } else {
-                                            hrac.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
-                                            f = true;
-                                        }
-
-                                        bearing.setText(String.valueOf(mMap.getCameraPosition().tilt));
-                                        //System.out.println(String.valueOf(mMap.getCameraPosition().bearing));
-
-                                        for (Checkpoint checkpoint : checkList) {
-                                            checkpoint.inside();
-                                        }
-
-                                        handler.postDelayed(this, 1000);
-                                    }
-                                };
-                                runnable.run();
+//                                final Handler handler = new Handler();
+//                                Runnable runnable = new Runnable() {
+//                                    public void run() {
+//                                        if (f) {
+//                                            hrac.setIcon(BitmapDescriptorFactory.fromAsset("kamera.bmp"));
+//                                            f = false;
+//                                        } else {
+//                                            hrac.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
+//                                            f = true;
+//                                        }
+//
+//                                        bearing.setText(String.valueOf(mMap.getCameraPosition().tilt));
+//                                        //System.out.println(String.valueOf(mMap.getCameraPosition().bearing));
+//
+//                                        for (Checkpoint checkpoint : checkList) {
+//                                            checkpoint.inside();
+//                                        }
+//
+//                                        handler.postDelayed(this, 1000);
+//                                    }
+//                                };
+//                                runnable.run();
                             }
                         }
                     });
@@ -174,21 +177,57 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
 
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setSmallestDisplacement(1);
-        locationRequest.setInterval(2000);
-        locationRequest.setFastestInterval(1000);
+        LocationRequest.Builder locationRequest = new LocationRequest.Builder(1000);
+        locationRequest.setMinUpdateDistanceMeters(2);
+//        locationRequest.setSmallestDisplacement(1);
+//        locationRequest.setInterval(2000);
+//        locationRequest.setFastestInterval(1000);
 
-        fusedLocationClient.requestLocationUpdates(locationRequest,new LocationCallback() {
+        fusedLocationClient.requestLocationUpdates(locationRequest.build(),new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 if (locationResult == null) return;
                 else {
-                    hrac.setPosition(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
+                    Location location = locationResult.getLastLocation();
+
+                    if (previous == null) {
+                        previous = location;
+                    }
+
+                    hrac.setRotation(previous.bearingTo(location));
+
+                    previous = location;
+
+                    changePositionSmoothly(hrac, new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
+                    for (Checkpoint checkpoint : checkList) {
+                        checkpoint.inside(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
+                    }
+
+                    //Location location = new Location("");
+                    /*location.setLatitude(hrac.getPosition().latitude);
+                    location.setLongitude(hrac.getPosition().longitude);*/
+
                 }
             }
         }, Looper.getMainLooper());
 
+    }
+
+    void changePositionSmoothly(Marker marker, LatLng newLatLng) {
+        if (marker == null) {
+            return;
+        }
+        ValueAnimator animation = ValueAnimator.ofFloat(0f, 100f);
+        final float[] previousStep = {0f};
+        double deltaLatitude = newLatLng.latitude - marker.getPosition().latitude;
+        double deltaLongitude = newLatLng.longitude - marker.getPosition().longitude;
+        animation.setDuration(1000);
+        animation.addUpdateListener(animation1 -> {
+            float deltaStep = (Float) animation1.getAnimatedValue() - previousStep[0];
+            previousStep[0] = (Float) animation1.getAnimatedValue();
+            marker.setPosition(new LatLng(marker.getPosition().latitude + deltaLatitude * deltaStep * 1 / 100, marker.getPosition().longitude + deltaStep * deltaLongitude * 1 / 100));
+        });
+        animation.start();
     }
 }
