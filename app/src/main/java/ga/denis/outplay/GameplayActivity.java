@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -141,7 +142,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                                 ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
                                 for (LatLng latLng : tempList) {
-                                    checkList.add(new Checkpoint(mMap, latLng));
+                                    checkList.add(new Checkpoint(mMap, latLng, "time"));
                                 }
                                 //Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 
@@ -179,6 +180,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
         LocationRequest.Builder locationRequest = new LocationRequest.Builder(1000);
         locationRequest.setMinUpdateDistanceMeters(2);
+        locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
 //        locationRequest.setSmallestDisplacement(1);
 //        locationRequest.setInterval(2000);
 //        locationRequest.setFastestInterval(1000);

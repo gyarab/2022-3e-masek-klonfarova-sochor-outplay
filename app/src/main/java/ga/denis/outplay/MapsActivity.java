@@ -170,8 +170,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 0d, null));
         //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 100d, null));
         //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 0d, null));
-        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 100d));
-        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 30d, 10d));
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 100d, "time"));
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 30d, 10d, "time"));
         for (Checkpoint checkpoint : list) {
             lokace.add(checkpoint.getLocation());
         }
