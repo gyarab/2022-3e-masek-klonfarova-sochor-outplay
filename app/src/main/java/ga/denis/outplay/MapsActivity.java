@@ -96,7 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MapStyleOptions mapStyleOptions = MapStyleOptions.loadRawResourceStyle(this, R.raw.style_json);
         mMap.setMapStyle(mapStyleOptions);
         mMap.getUiSettings().setMapToolbarEnabled(false);
-        mMap.getUiSettings().setZoomGesturesEnabled(false);
+        //mMap.getUiSettings().setZoomGesturesEnabled(false);
 
         if (ContextCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -117,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
                                 mMap.setOnMarkerClickListener(marker -> true);
-                                mMap.addMarker(new MarkerOptions().position(pozice)/*.title("Current position")*/.icon(BitmapDescriptorFactory.fromAsset("kamera.bmp")).flat(true).anchor(0.5f,0.5f));
+                                mMap.addMarker(new MarkerOptions().position(pozice)/*.title("Current position")*/.icon(BitmapDescriptorFactory.fromAsset("location.bmp")).flat(true).anchor(0.5f,0.5f));
                                 poly1 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
                                 poly2 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
                                 poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));

@@ -46,7 +46,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     private ActivityGameplayBinding binding;
     private FusedLocationProviderClient fusedLocationClient;
     private Marker hrac;
-    private boolean f = false;
+    //private boolean f = false;
     TextView bearing;
     ArrayList<Checkpoint> checkList = new ArrayList<>();
     Location previous = null;

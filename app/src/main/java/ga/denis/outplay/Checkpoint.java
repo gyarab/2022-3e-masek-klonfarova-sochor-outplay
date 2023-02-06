@@ -53,7 +53,7 @@ public class Checkpoint {
         Location.distanceBetween(me.getPosition().latitude, me.getPosition().longitude, hrac.latitude, hrac.longitude, results);
         if(results[0] <= 15) {
             a = true;
-            if (!capturing) me.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
+            if (!capturing) me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_entered.bmp"));
         } else {
             a = false;
             if (!capturing) me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_uncaptured.bmp"));
