@@ -1,8 +1,7 @@
 package ga.denis.outplay;
 
 import android.location.Location;
-
-import androidx.annotation.Nullable;
+import android.os.Handler;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -16,7 +15,9 @@ public class Checkpoint {
     Marker me;
     //Marker hrac;
     String type;
-    int time;
+    int time = 8;
+    int cas;
+    boolean capturing = false;
 
     public Checkpoint(GoogleMap mMap, LatLng lokace/*, @Nullable Marker hrac*/, String type) {
         this.lokace = lokace;
@@ -39,9 +40,9 @@ public class Checkpoint {
     public void setTime(int cas) {
         if (type.equals("time")) {
             if (cas > 0) time = cas;
-            else throw new RuntimeException("Time value must be higher than zero");
+            else System.out.println("Time value must be higher than zero");
         } else {
-            throw new RuntimeException("Can't set the time property of a non-time checkpoint");
+            System.out.println("Can't set the time property of a non-time checkpoint");
         }
     }
 
@@ -52,10 +53,10 @@ public class Checkpoint {
         Location.distanceBetween(me.getPosition().latitude, me.getPosition().longitude, hrac.latitude, hrac.longitude, results);
         if(results[0] <= 15) {
             a = true;
-            me.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
+            if (!capturing) me.setIcon(BitmapDescriptorFactory.fromAsset("crosshair.bmp"));
         } else {
             a = false;
-            me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp"));
+            if (!capturing) me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_uncaptured.bmp"));
         }
 
         return a;
@@ -63,5 +64,29 @@ public class Checkpoint {
 
     public LatLng getLocation() {
         return lokace;
+    }
+
+    public void capture() {
+        if (type.equals("time")) {
+            capturing = true;
+            cas = time;
+            final Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    if (cas == 0) {
+                        me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp"));
+                    }
+                    else if (inside(GameplayActivity.publicHrac.location)) {
+                        cas--;
+                        System.out.println(Math.floor(cas / (time / 8d)));
+                        me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_" + (int) Math.floor(cas / (time / 8d)) + ".bmp"));
+                        handler.postDelayed(this, 1000);
+                    } else {
+                        capturing = false;
+                    }
+                }
+            };
+            runnable.run();
+        }
     }
 }

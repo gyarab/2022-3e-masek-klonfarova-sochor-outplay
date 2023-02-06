@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <androidx.fragment.app.FragmentContainerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:textAlignment="center">
+
+    <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/Gameplay"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -22,4 +23,15 @@
         android:layout_marginBottom="0dp"
         android:text="TextView"
         android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/interactButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/gameplayTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:singleLine="true"
+        android:text="@string/Interact"
+        android:textSize="20sp" />
 </RelativeLayout>

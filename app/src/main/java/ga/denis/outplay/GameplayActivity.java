@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,7 +40,7 @@ import java.util.ArrayList;
 
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
 
-public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback {
+public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
     private GoogleMap mMap;
     private ActivityGameplayBinding binding;
@@ -48,6 +50,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     TextView bearing;
     ArrayList<Checkpoint> checkList = new ArrayList<>();
     Location previous = null;
+    Button interactButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,9 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
         setContentView(binding.getRoot());
 
         bearing = (TextView) findViewById(R.id.gameplayTextView);
+
+        interactButton = (Button) findViewById(R.id.interactButton);
+        interactButton.setOnClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
@@ -144,6 +150,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                 for (LatLng latLng : tempList) {
                                     checkList.add(new Checkpoint(mMap, latLng, "time"));
                                 }
+
+                                checkList.get(0).setTime(3);
+                                checkList.get(2).setTime(20);
+
                                 //Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 
 //                                final Handler handler = new Handler();
@@ -205,6 +215,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     for (Checkpoint checkpoint : checkList) {
                         checkpoint.inside(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
                     }
+                    publicHrac.location = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
 
                     //Location location = new Location("");
                     /*location.setLatitude(hrac.getPosition().latitude);
@@ -231,5 +242,22 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             marker.setPosition(new LatLng(marker.getPosition().latitude + deltaLatitude * deltaStep * 1 / 100, marker.getPosition().longitude + deltaStep * deltaLongitude * 1 / 100));
         });
         animation.start();
+    }
+
+    @Override
+    public void onClick(View view) {
+        boolean capt = true;
+        for (Checkpoint checkpoint : checkList) {
+            if (checkpoint.inside(hrac.getPosition())) {
+                checkpoint.capture();
+                capt = false;
+                break;
+            }
+        }
+        if (capt) System.out.println("No checkpoint to capture");
+    }
+
+    public static class publicHrac {
+        static LatLng location;
     }
 }

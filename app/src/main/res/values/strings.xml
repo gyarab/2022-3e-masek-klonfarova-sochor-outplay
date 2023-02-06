@@ -19,6 +19,7 @@
     <string name="English">English</string>
     <string name="Czech">Czech</string>
     <string name="Germany">Germany</string>
+    <string name="Interact">Interact</string>
 
     <string-array name="ListLanguage">
         <item>English</item>
