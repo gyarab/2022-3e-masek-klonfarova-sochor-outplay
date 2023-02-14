@@ -33,25 +33,33 @@ public class ScannerActivity extends AppCompatActivity {
                     public void run() {
                         Toast.makeText(ScannerActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
 
-                        try {
-                            SocketHandler.setSocket(new Socket("217.30.67.109",10000));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    SocketHandler.setSocket(new Socket("217.30.67.109",10000));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
-                        OutputStream output = null;
-                        
-                        try {
-                            output = SocketHandler.getSocket().getOutputStream();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                                OutputStream output = null;
 
-                        try {
-                            output.write(result.getText().getBytes());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                                try {
+                                    output = SocketHandler.getSocket().getOutputStream();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    output.write(result.getText().getBytes());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        thread.start();
+
+
                     }
                 });
             }
