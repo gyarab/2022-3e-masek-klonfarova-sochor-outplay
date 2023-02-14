@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -31,12 +32,12 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 
-import ga.denis.outplay.databinding.ActivityMapsBinding;
+import ga.denis.outplay.databinding.ActivityPlayspaceBinding;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
+public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
+    private ActivityPlayspaceBinding binding;
     private FusedLocationProviderClient fusedLocationClient;
     Button startButton;
     Marker poly1;
@@ -48,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        binding = ActivityPlayspaceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         startButton = (Button) findViewById(R.id.startButton);
@@ -152,14 +153,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-                    ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
+            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
 
     }
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(MapsActivity.this, GameplayActivity.class);
+        Intent intent = new Intent(PlayspaceActivity.this, InviteActivity.class);
         ArrayList<Checkpoint> list = new ArrayList();
         ArrayList<LatLng> lokace = new ArrayList<>();
         //list.add(new Checkpoint(mMap,poly1.getPosition(),null));
@@ -181,6 +182,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         intent.putExtra("poly3", poly3.getPosition());
         intent.putExtra("poly4", poly4.getPosition());
         intent.putExtra("checkLoc", lokace);
+        //intent.putExtra("gameID", getIntent().getExtras().getString("gameID"));
         startActivity(intent);
     }
 }

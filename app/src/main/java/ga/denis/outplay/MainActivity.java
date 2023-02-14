@@ -15,7 +15,6 @@ import androidx.navigation.ui.NavigationUI;
 
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 import ga.denis.outplay.databinding.ActivityMainBinding;
 
@@ -39,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                Intent intent = new Intent(MainActivity.this, PlayspaceActivity.class);
+                intent.putExtra("gameID", "1");
+                startActivity(intent);
             }
         });
         DrawerLayout drawer = binding.drawerLayout;

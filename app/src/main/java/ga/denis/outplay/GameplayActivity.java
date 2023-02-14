@@ -36,9 +36,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
+import ga.denis.outplay.ui.SocketHandler;
 
 public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
@@ -51,6 +58,11 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     ArrayList<Checkpoint> checkList = new ArrayList<>();
     Location previous = null;
     Button interactButton;
+    OutputStream output;
+    BufferedReader bufferedReader;
+    boolean sendChange = false;
+    String change = "";
+    byte playerID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +76,62 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
         interactButton = (Button) findViewById(R.id.interactButton);
         interactButton.setOnClickListener(this);
 
+        playerID = getIntent().getExtras().getByte("playerID");
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
                 .findFragmentById(R.id.Gameplay);
         mapFragment.getMapAsync(this);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    output = SocketHandler.getSocket().getOutputStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                String message = getIntent().getExtras().getString("gameID");
+
+                try {
+                    output.write(message.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                LatLng location = publicHrac.location;
+                for (;;) {
+                    if (location != publicHrac.location) {
+                        location = publicHrac.location;
+                        String lokace = "Lokace: " + location.latitude + " " + location.longitude;
+                        try {
+                            output.write(lokace.getBytes());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (sendChange) {
+                        sendChange = false;
+                        try {
+                            output.write(change.getBytes());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+        t.start();
     }
 
     /*ActivityResultLauncher<String[]> locationPermissionRequest =
@@ -217,6 +279,13 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     }
                     publicHrac.location = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
 
+//                    String message = "Lokace: " + locationResult.getLastLocation().getLatitude() + " " + locationResult.getLastLocation().getLongitude();
+//                    try {
+//                        output.write(message.getBytes());
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+
                     //Location location = new Location("");
                     /*location.setLatitude(hrac.getPosition().latitude);
                     location.setLongitude(hrac.getPosition().longitude);*/
@@ -251,6 +320,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             if (checkpoint.inside(hrac.getPosition())) {
                 checkpoint.capture();
                 capt = false;
+                changeAsync("Capturing checkpoint");
                 break;
             }
         }
@@ -259,5 +329,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
     public static class publicHrac {
         static LatLng location;
+    }
+
+    public void changeAsync(String message) {
+        change = message;
+        sendChange = true;
     }
 }
