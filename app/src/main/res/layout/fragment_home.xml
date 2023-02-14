@@ -27,7 +27,7 @@
      />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/joinGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/join"
@@ -52,7 +52,7 @@
 
 
         <Button
-            android:id="@+id/NewGame"
+            android:id="@+id/newGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/NewGame"

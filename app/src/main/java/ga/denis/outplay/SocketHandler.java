@@ -1,4 +1,4 @@
-package ga.denis.outplay.ui;
+package ga.denis.outplay;
 
 import java.net.Socket;
 

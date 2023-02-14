@@ -40,12 +40,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
-import ga.denis.outplay.ui.SocketHandler;
 
 public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
@@ -96,14 +93,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                 try {
                     bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                String message = getIntent().getExtras().getString("gameID");
-
-                try {
-                    output.write(message.getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -2,9 +2,12 @@ package ga.denis.outplay;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.BufferedReader;
@@ -15,13 +18,13 @@ import java.net.Socket;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
-import ga.denis.outplay.ui.SocketHandler;
 
-public class InviteActivity extends AppCompatActivity {
+public class InviteActivity extends AppCompatActivity implements View.OnClickListener {
     BufferedReader bufferedReader;
     Bitmap qr;
     ImageView qrCode;
     OutputStream output;
+    Button inviteContinue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,8 @@ public class InviteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_invite);
 
         qrCode = (ImageView) findViewById(R.id.qrCode);
+        inviteContinue = (Button) findViewById(R.id.inviteContinue);
+        inviteContinue.setOnClickListener(this);
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -80,5 +85,12 @@ public class InviteActivity extends AppCompatActivity {
         });
 
         thread.start();
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = getIntent();
+        intent.setClass(InviteActivity.this, GameplayActivity.class);
+        startActivity(intent);
     }
 }

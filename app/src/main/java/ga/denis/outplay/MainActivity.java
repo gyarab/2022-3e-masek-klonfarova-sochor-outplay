@@ -1,5 +1,6 @@
 package ga.denis.outplay;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Button n = findViewById(R.id.NewGame);
+        Button n = findViewById(R.id.newGame);
 
+        Button join = findViewById(R.id.joinGame);
 
         setSupportActionBar(binding.appBarMain.toolbar);
         n.setOnClickListener(new View.OnClickListener() {
@@ -39,10 +41,18 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Intent intent = new Intent(MainActivity.this, PlayspaceActivity.class);
-                intent.putExtra("gameID", "1");
                 startActivity(intent);
             }
         });
+
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
+                startActivity(intent);
+            }
+        });
+
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
