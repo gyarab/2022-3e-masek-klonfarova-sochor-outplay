@@ -9,6 +9,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class Checkpoint {
     LatLng lokace;
     GoogleMap mMap;
@@ -18,6 +21,7 @@ public class Checkpoint {
     int time = 8;
     int cas;
     boolean capturing = false;
+    int id;
 
     public Checkpoint(GoogleMap mMap, LatLng lokace/*, @Nullable Marker hrac*/, String type) {
         this.lokace = lokace;
@@ -66,7 +70,7 @@ public class Checkpoint {
         return lokace;
     }
 
-    public void capture() {
+    public void capture(int id) {
         if (type.equals("time")) {
             capturing = true;
             cas = time;
@@ -75,6 +79,7 @@ public class Checkpoint {
                 public void run() {
                     if (cas == 0) {
                         me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp"));
+                        send("finishcap_" + id);
                     }
                     else if (inside(GameplayActivity.publicHrac.location)) {
                         cas--;
@@ -83,10 +88,31 @@ public class Checkpoint {
                         handler.postDelayed(this, 1000);
                     } else {
                         capturing = false;
+                        send("stopcap_" + id);
                     }
                 }
             };
             runnable.run();
         }
+    }
+
+    private void send(String message) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OutputStream output = null;
+                try {
+                    output = SocketHandler.getSocket().getOutputStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    output.write(message.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 }

@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
+        android:minWidth="800px"
+        android:minHeight="800px"
         app:srcCompat="?android:attr/galleryItemBackground" />
 
     <Button

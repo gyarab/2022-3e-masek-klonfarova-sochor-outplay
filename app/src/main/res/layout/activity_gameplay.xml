@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         tools:context=".GameplayActivity" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/gameplayTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,15 +22,16 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="0dp"
         android:text="TextView"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF" />-->
 
     <Button
         android:id="@+id/interactButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/gameplayTextView"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="50dp"
+        android:minHeight="70dp"
         android:singleLine="true"
         android:text="@string/Interact"
         android:textSize="20sp" />

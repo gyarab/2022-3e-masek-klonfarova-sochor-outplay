@@ -72,7 +72,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 qrgEncoder.setColorBlack(Color.BLACK);
                 qrgEncoder.setColorWhite(Color.WHITE);
-                qr = Bitmap.createBitmap(qrgEncoder.getBitmap(), 50, 50, 924, 924);
+                qr = Bitmap.createBitmap(qrgEncoder.getBitmap(), 10, 10, 800, 800);
 
                 runOnUiThread(new Runnable() {
 

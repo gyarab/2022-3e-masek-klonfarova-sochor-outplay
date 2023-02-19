@@ -40,6 +40,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
@@ -51,7 +52,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     private FusedLocationProviderClient fusedLocationClient;
     private Marker hrac;
     //private boolean f = false;
-    TextView bearing;
+    //TextView bearing;
     ArrayList<Checkpoint> checkList = new ArrayList<>();
     Location previous = null;
     Button interactButton;
@@ -59,7 +60,12 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     BufferedReader bufferedReader;
     boolean sendChange = false;
     String change = "";
-    byte playerID;
+    int playerID;
+    String team;
+    LatLng[] locations = new LatLng[4];
+    int eliminatable;
+    int elimDist = 12;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +74,15 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
         binding = ActivityGameplayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        bearing = (TextView) findViewById(R.id.gameplayTextView);
+        //bearing = (TextView) findViewById(R.id.gameplayTextView);
 
         interactButton = (Button) findViewById(R.id.interactButton);
         interactButton.setOnClickListener(this);
+        interactButton.setEnabled(false);
 
-        playerID = getIntent().getExtras().getByte("playerID");
+        playerID = getIntent().getExtras().getInt("playerID");
+
+        team = getIntent().getExtras().getString("team");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
@@ -82,7 +91,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        Thread t = new Thread(new Runnable() {
+        Thread senderThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -93,6 +102,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                 try {
                     bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
+                    if (bufferedReader != null) System.out.println("bufferedReader set");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -101,7 +111,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                 for (;;) {
                     if (location != publicHrac.location) {
                         location = publicHrac.location;
-                        String lokace = "Lokace: " + location.latitude + " " + location.longitude;
+                        String lokace = "loc_" + location.latitude + "_" + location.longitude + "_" + playerID;
                         try {
                             output.write(lokace.getBytes());
                         } catch (IOException e) {
@@ -120,8 +130,66 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                 }
             }
         });
-        t.start();
+        senderThread.start();
+
+        Thread recieverThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("reciever thread started");
+                String message = "";
+                for (;;) {
+                    try {
+                        message = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String[] divided = message.split("_");
+
+                    if (divided[0].equals("loc")) {
+                        System.out.println(divided[3]);
+                        locations[Integer.parseInt(divided[3])] = (new LatLng(Double.parseDouble(divided[1]), Double.parseDouble(divided[2])));
+                        System.out.println("Location of: " + divided[3] + " set to: " + locations[Integer.parseInt(divided[3])].longitude + " " + locations[Integer.parseInt(divided[3])].latitude);
+
+                        if (team.equals("eliminate")) {
+                            boolean elim = true;
+                            for (int i = 0; i < locations.length; i++) {
+                                if (playerID != i && locations[i] != null) {
+                                    float[] results = new float[1];
+                                    Location.distanceBetween(publicHrac.location.latitude, publicHrac.location.longitude, locations[i].latitude, locations[i].longitude, results);
+                                    if (results[0] <= elimDist) {
+                                        eliminatable = i;
+                                        elim = false;
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                interactButton.setEnabled(true);
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                            if (elim) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        interactButton.setEnabled(false);
+                                    }
+                                });
+                            }
+                        }
+                    } else if (divided[0].equals("startcap")) {
+
+                    } else if (divided[0].equals("stopcap")) {
+
+                    } else if (divided[0].equals("finishcap")) {
+
+                    }
+                }
+            }
+        });
+        recieverThread.start();
     }
+
 
     /*ActivityResultLauncher<String[]> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts
@@ -263,9 +331,34 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     previous = location;
 
                     changePositionSmoothly(hrac, new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
-                    for (Checkpoint checkpoint : checkList) {
-                        checkpoint.inside(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
+
+                    if (team.equals("capture")) {
+                        boolean cap = true;
+                        for (Checkpoint checkpoint : checkList) {
+                            if (checkpoint.inside(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()))) {
+                                cap = false;
+                                interactButton.setEnabled(true);
+                            }
+                        }
+                        if (cap) interactButton.setEnabled(false);
+                    } else if (team.equals("eliminate")) {
+                        boolean elim = true;
+                        for (int i = 0; i < locations.length; i++) {
+                            if (playerID != i) {
+                                float[] results = new float[1];
+                                Location.distanceBetween(publicHrac.location.latitude, publicHrac.location.longitude, locations[i].latitude, locations[i].longitude, results);
+                                if (results[0] <= elimDist) {
+                                    eliminatable = i;
+                                    elim = false;
+                                    interactButton.setEnabled(true);
+                                }
+                            }
+                        }
+                        if (elim) {
+                            interactButton.setEnabled(false);
+                        }
                     }
+
                     publicHrac.location = new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
 
 //                    String message = "Lokace: " + locationResult.getLastLocation().getLatitude() + " " + locationResult.getLastLocation().getLongitude();
@@ -304,16 +397,24 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
     @Override
     public void onClick(View view) {
-        boolean capt = true;
-        for (Checkpoint checkpoint : checkList) {
-            if (checkpoint.inside(hrac.getPosition())) {
-                checkpoint.capture();
-                capt = false;
-                changeAsync("Capturing checkpoint");
-                break;
+        if (team.equals("capture")) {
+            boolean cap = true;
+            for (int i = 0; i < checkList.size(); i++) {
+                if (checkList.get(i).inside(hrac.getPosition())) {
+                    checkList.get(i).capture(i);
+                    cap = false;
+                    changeAsync("startcap_" + i);
+                    break;
+                }
+            }
+            if (cap) System.out.println("No checkpoint to capture");
+        } else if (team.equals("eliminate")) {
+            try {
+                output.write(("eliminate_" + eliminatable).getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        if (capt) System.out.println("No checkpoint to capture");
     }
 
     public static class publicHrac {

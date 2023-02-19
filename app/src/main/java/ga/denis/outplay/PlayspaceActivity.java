@@ -182,6 +182,8 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
         intent.putExtra("poly3", poly3.getPosition());
         intent.putExtra("poly4", poly4.getPosition());
         intent.putExtra("checkLoc", lokace);
+        intent.putExtra("team", "capture");
+        intent.putExtra("playerID", 1);
         //intent.putExtra("gameID", getIntent().getExtras().getString("gameID"));
         startActivity(intent);
     }
