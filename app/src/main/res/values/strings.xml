@@ -9,6 +9,7 @@
     <string name="action_settings">Settings</string>
     <string name="pokyn1">To join an existing game, click on the join button. You can then scan the QR code and start playing.</string>
     <string name="pokyn2">To create a new game and then invite other players, click on the create game button.</string>
+    <string name="pokyn3">Also don\'t forget to type your desired in-game name in the input field below</string>
     <string name="join">Join Game</string>
     <string name="NewGame">New game</string>
     <string name="menu_home">Outplay</string>
@@ -20,6 +21,11 @@
     <string name="Czech">Czech</string>
     <string name="Germany">Germany</string>
     <string name="Interact">Interact</string>
+    <string name="change">Change team</string>
+    <string name="go">Continue</string>
+    <string name="playername">Enter your in-game name</string>
+    <string name="zprava1">Waiting for host to start the game....</string>
+    <string name="zprava2">Your name should be on the host screen</string>
 
     <string-array name="ListLanguage">
         <item>English</item>

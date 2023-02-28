@@ -13,18 +13,18 @@
         android:layout_marginTop="90dp"
         >
 
-    <TextView
-        android:id="@+id/text_home3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:text="@string/pokyn1"
-        android:paddingVertical="10dp"
-     />
+        <TextView
+            android:id="@+id/text_home1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:text="@string/pokyn1"
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/joinGame"
@@ -43,11 +43,11 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:text="@string/pokyn2"
+            android:gravity="center"
             android:paddingVertical="10dp"
-            />
+            android:text="@string/pokyn2"
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
 
 
@@ -60,6 +60,33 @@
             android:layout_marginEnd="50dp"
             android:paddingVertical="10dp"
          />
+
+        <TextView
+            android:id="@+id/text_home3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:text="@string/pokyn3"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="25dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/playername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/playername" />
+        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

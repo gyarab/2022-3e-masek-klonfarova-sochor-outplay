@@ -1,14 +1,19 @@
 package ga.denis.outplay;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,6 +22,8 @@ import androidx.navigation.ui.NavigationUI;
 
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import ga.denis.outplay.databinding.ActivityMainBinding;
 
@@ -34,25 +41,47 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA},1);;
+
+
         Button n = findViewById(R.id.newGame);
 
         Button join = findViewById(R.id.joinGame);
+
+        TextInputEditText text = findViewById(R.id.playername);
 
         setSupportActionBar(binding.appBarMain.toolbar);
         n.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                Intent intent = new Intent(MainActivity.this, PlayspaceActivity.class);
-                startActivity(intent);
+                String name = text.getText().toString();
+                if (name.contains("_")) {
+                    Toast.makeText(getApplicationContext(),"Name must not contain an underscore", Toast.LENGTH_SHORT).show();
+                } else if (!name.equals("")) {
+                    SocketHandler.setName(name);
+                    Intent intent = new Intent(MainActivity.this, PlayspaceActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(),"You must choose a name", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = text.getText().toString();
+                if (name.contains("_")) {
+                    Toast.makeText(getApplicationContext(),"Name must not contain an underscore", Toast.LENGTH_SHORT).show();
+                } else if (!name.equals("")) {
+                SocketHandler.setName(name);
                 Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
                 startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(),"You must choose a name", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

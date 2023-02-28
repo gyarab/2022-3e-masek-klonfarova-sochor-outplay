@@ -1,5 +1,6 @@
 package ga.denis.outplay;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -15,6 +16,8 @@ import com.google.zxing.Result;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+
+import ga.denis.outplay.ui.WaitActivity;
 
 public class ScannerActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
@@ -55,11 +58,17 @@ public class ScannerActivity extends AppCompatActivity {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
+
+                                try {
+                                    output.write(("addplayer_" + SocketHandler.getName()).getBytes());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
                         thread.start();
 
-
+                        startActivity(new Intent(ScannerActivity.this, WaitActivity.class));
                     }
                 });
             }

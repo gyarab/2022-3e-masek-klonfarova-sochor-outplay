@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +27,10 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     ImageView qrCode;
     OutputStream output;
     Button inviteContinue;
+    RelativeLayout[] players = new RelativeLayout[3];
+    byte playerAmount = 0;
+    TextView[] playerNames = new TextView[3];
+    TextView myName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,18 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         qrCode = (ImageView) findViewById(R.id.qrCode);
         inviteContinue = (Button) findViewById(R.id.inviteContinue);
         inviteContinue.setOnClickListener(this);
+
+        //players[0] = findViewById(R.id.player1);
+        players[0] = findViewById(R.id.player2);
+        players[1] = findViewById(R.id.player3);
+        players[2] = findViewById(R.id.player4);
+
+        playerNames[0] = findViewById(R.id.player2name);
+        playerNames[1] = findViewById(R.id.player3name);
+        playerNames[2] = findViewById(R.id.player4name);
+
+        myName = findViewById(R.id.player1name);
+        myName.setText(SocketHandler.getName());
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -66,13 +84,13 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                 QRGEncoder qrgEncoder = null;
                 try {
                     qrgEncoder = new QRGEncoder(bufferedReader.readLine(),
-                            null, QRGContents.Type.TEXT, 1024);
+                            null, QRGContents.Type.TEXT, 800);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                qrgEncoder.setColorBlack(Color.BLACK);
-                qrgEncoder.setColorWhite(Color.WHITE);
-                qr = Bitmap.createBitmap(qrgEncoder.getBitmap(), 10, 10, 800, 800);
+                qrgEncoder.setColorBlack(Color.parseColor("#FFBA85FB"));
+                qrgEncoder.setColorWhite(Color.parseColor("#FF121212"));
+                qr = Bitmap.createBitmap(qrgEncoder.getBitmap());
 
                 runOnUiThread(new Runnable() {
 
@@ -81,10 +99,84 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                         qrCode.setImageBitmap(qr);
                     }
                 });
+
+                System.out.println("starting for");
+
+                for (;;) {
+                    String message = "";
+                    try {
+                        message = bufferedReader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String[] divided = message.split("_");
+                    if (divided[0].equals("playersreload")) {
+                        System.out.println("reloading players");
+                        players[0].setVisibility(View.INVISIBLE);
+                        players[1].setVisibility(View.INVISIBLE);
+                        players[2].setVisibility(View.INVISIBLE);
+                    } else if (divided[0].equals("addplayer")) {
+                        if (playerAmount < 3) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    players[playerAmount].setVisibility(View.VISIBLE);
+                                    playerNames[playerAmount].setText(divided[1]);
+                                    playerAmount++;
+                                }
+                            });
+
+                        } else {
+                            System.out.println("Players full");
+                        }
+                    }
+                }
             }
         });
 
         thread.start();
+
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    output = SocketHandler.getSocket().getOutputStream();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                try {
+//                    bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                for (;;) {
+//                    String message = "";
+//                    try {
+//                        message = bufferedReader.readLine();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                    String[] divided = message.split("_");
+//                    if (divided[0].equals("playersreload")) {
+//                        players[0].setVisibility(View.INVISIBLE);
+//                        players[1].setVisibility(View.INVISIBLE);
+//                        players[2].setVisibility(View.INVISIBLE);
+//                    } else if (divided[0].equals("addplayer")) {
+//                        if (playerAmount < 3) {
+//                            players[playerAmount].setVisibility(View.VISIBLE);
+//                            playerNames[playerAmount].setText(divided[1]);
+//                            playerAmount++;
+//                        } else {
+//                            System.out.println("Players full");
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//
+//        t.start();
     }
 
     @Override
