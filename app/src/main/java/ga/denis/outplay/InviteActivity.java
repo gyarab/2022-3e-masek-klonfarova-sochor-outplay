@@ -181,8 +181,20 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        Intent intent = getIntent();
-        intent.setClass(InviteActivity.this, GameplayActivity.class);
-        startActivity(intent);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    output.write("startgame".getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Intent intent = getIntent();
+                intent.setClass(InviteActivity.this, GameplayActivity.class);
+                startActivity(intent);
+            }
+        });
+        thread.start();
     }
 }

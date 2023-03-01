@@ -64,11 +64,11 @@ public class ScannerActivity extends AppCompatActivity {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
+
+                                startActivity(new Intent(ScannerActivity.this, WaitActivity.class));
                             }
                         });
                         thread.start();
-
-                        startActivity(new Intent(ScannerActivity.this, WaitActivity.class));
                     }
                 });
             }
