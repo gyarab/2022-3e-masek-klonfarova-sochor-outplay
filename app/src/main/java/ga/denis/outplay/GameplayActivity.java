@@ -136,6 +136,12 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             @Override
             public void run() {
                 System.out.println("reciever thread started");
+                try {
+                    bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
+                    if (bufferedReader != null) System.out.println("bufferedReader set too");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 String message = "";
                 for (;;) {
                     try {
