@@ -1,4 +1,4 @@
-package ga.denis.outplay.ui;
+package ga.denis.outplay;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,10 +8,6 @@ import android.os.Bundle;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import ga.denis.outplay.GameplayActivity;
-import ga.denis.outplay.R;
-import ga.denis.outplay.SocketHandler;
 
 public class WaitActivity extends AppCompatActivity {
     BufferedReader bufferedReader;
@@ -37,12 +33,17 @@ public class WaitActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    System.out.println(message);
+
                     if (message.equals("startgame")) {
                         Intent intent = getIntent();
                         intent.setClass(WaitActivity.this, GameplayActivity.class);
+                        startActivity(intent);
                     }
                 }
             }
         });
+        thread.start();
     }
 }

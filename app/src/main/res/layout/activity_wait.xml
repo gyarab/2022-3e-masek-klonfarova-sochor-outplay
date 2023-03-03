@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FF121212"
     android:backgroundTint="#FF121212"
-    tools:context=".ui.WaitActivity">
+    tools:context=".WaitActivity">
 
     <TextView
         android:id="@+id/text_home"

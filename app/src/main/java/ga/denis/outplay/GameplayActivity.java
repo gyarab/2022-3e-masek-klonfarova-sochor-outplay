@@ -276,8 +276,8 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                     checkList.add(new Checkpoint(mMap, latLng, "time"));
                                 }
 
-                                checkList.get(0).setTime(3);
-                                checkList.get(2).setTime(20);
+                                if (checkList.size() >= 0) checkList.get(0).setTime(3);
+                                if (checkList.size() >= 2) checkList.get(2).setTime(20);
 
                                 //Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 

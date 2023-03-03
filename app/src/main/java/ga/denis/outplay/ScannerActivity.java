@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import ga.denis.outplay.ui.WaitActivity;
-
 public class ScannerActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
 
