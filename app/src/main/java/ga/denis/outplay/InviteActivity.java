@@ -12,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -185,7 +188,11 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 try {
-                    output.write("startgame".getBytes());
+                    LatLng poly1 = getIntent().getExtras().getParcelable("poly1");
+                    LatLng poly2 = getIntent().getExtras().getParcelable("poly2");
+                    LatLng poly3 = getIntent().getExtras().getParcelable("poly3");
+                    LatLng poly4 = getIntent().getExtras().getParcelable("poly4");
+                    output.write(("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + "eliminate_2").getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

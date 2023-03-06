@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,11 +36,19 @@ public class WaitActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                    String[] divided = message.split("_");
+
                     System.out.println(message);
 
-                    if (message.equals("startgame")) {
+                    if (divided[0].equals("startgame")) {
                         Intent intent = getIntent();
                         intent.setClass(WaitActivity.this, GameplayActivity.class);
+                        intent.putExtra("poly1", new LatLng(Double.parseDouble(divided[1]),Double.parseDouble(divided[2])));
+                        intent.putExtra("poly2", new LatLng(Double.parseDouble(divided[3]),Double.parseDouble(divided[4])));
+                        intent.putExtra("poly3", new LatLng(Double.parseDouble(divided[5]),Double.parseDouble(divided[6])));
+                        intent.putExtra("poly4", new LatLng(Double.parseDouble(divided[7]),Double.parseDouble(divided[8])));
+                        intent.putExtra("team", divided[9]);
+                        intent.putExtra("playerID", Integer.parseInt(divided[10]));
                         startActivity(intent);
                     }
                 }
