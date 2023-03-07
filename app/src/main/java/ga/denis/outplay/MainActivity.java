@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);;
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA},1);;
 
 
         Button n = findViewById(R.id.newGame);

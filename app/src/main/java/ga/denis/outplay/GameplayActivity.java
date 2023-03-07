@@ -271,14 +271,15 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                 hrac = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("player.bmp")).flat(true).anchor(0.5f,0.5f));
                                 mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly3"), getIntent().getExtras().getParcelable("poly4")));
 
-                                ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
-                                for (LatLng latLng : tempList) {
-                                    checkList.add(new Checkpoint(mMap, latLng, "time"));
+                                if (getIntent().hasExtra("checkLoc")) {
+                                    ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
+                                    for (LatLng latLng : tempList) {
+                                        checkList.add(new Checkpoint(mMap, latLng, "time"));
+                                    }
+
+                                    if (checkList.size() >= 0) checkList.get(0).setTime(3);
+                                    if (checkList.size() >= 2) checkList.get(2).setTime(20);
                                 }
-
-                                if (checkList.size() >= 0) checkList.get(0).setTime(3);
-                                if (checkList.size() >= 2) checkList.get(2).setTime(20);
-
                                 //Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 
 //                                final Handler handler = new Handler();
