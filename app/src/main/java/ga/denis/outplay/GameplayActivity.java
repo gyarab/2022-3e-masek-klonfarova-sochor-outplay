@@ -351,7 +351,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     } else if (team.equals("eliminate")) {
                         boolean elim = true;
                         for (int i = 0; i < locations.length; i++) {
-                            if (playerID != i) {
+                            if (playerID != i && locations[i] != null) {
                                 float[] results = new float[1];
                                 Location.distanceBetween(publicHrac.location.latitude, publicHrac.location.longitude, locations[i].latitude, locations[i].longitude, results);
                                 if (results[0] <= elimDist) {
@@ -416,11 +416,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             }
             if (cap) System.out.println("No checkpoint to capture");
         } else if (team.equals("eliminate")) {
-            try {
-                output.write(("eliminate_" + eliminatable).getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                changeAsync(("eliminate_" + eliminatable));
         }
     }
 
