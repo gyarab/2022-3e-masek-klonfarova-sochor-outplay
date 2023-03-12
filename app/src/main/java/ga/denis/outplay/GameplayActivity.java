@@ -65,7 +65,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     LatLng[] locations = new LatLng[4];
     int eliminatable;
     int elimDist = 12;
-
+    Marker nearby = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -358,11 +358,13 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                     eliminatable = i;
                                     elim = false;
                                     interactButton.setEnabled(true);
+                                    nearby = mMap.addMarker(new MarkerOptions().position(locations[i]).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f,0.5f));
                                 }
                             }
                         }
                         if (elim) {
                             interactButton.setEnabled(false);
+                            nearby.remove();
                         }
                     }
 
