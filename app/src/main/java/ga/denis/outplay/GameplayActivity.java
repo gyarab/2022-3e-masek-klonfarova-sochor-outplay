@@ -70,6 +70,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     int elimDist = 12;
     Marker nearby = null;
     ImageView overlay;
+    LatLng helperLokace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
