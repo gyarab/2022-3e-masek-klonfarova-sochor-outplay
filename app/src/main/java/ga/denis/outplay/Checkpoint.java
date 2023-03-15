@@ -22,6 +22,7 @@ public class Checkpoint {
     int cas;
     boolean capturing = false;
     int id;
+    boolean capture = true;
 
     public Checkpoint(GoogleMap mMap, LatLng lokace/*, @Nullable Marker hrac*/, String type) {
         this.lokace = lokace;
@@ -80,6 +81,8 @@ public class Checkpoint {
                     if (cas == 0) {
                         me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp"));
                         send("finishcap_" + id);
+                        GameplayActivity.publicHrac.capture = true;
+                        capture = false;
                     }
                     else if (inside(GameplayActivity.publicHrac.location)) {
                         cas--;
@@ -89,6 +92,7 @@ public class Checkpoint {
                     } else {
                         capturing = false;
                         send("stopcap_" + id);
+                        GameplayActivity.publicHrac.capture = true;
                     }
                 }
             };

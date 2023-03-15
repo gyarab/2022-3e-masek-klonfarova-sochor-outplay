@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,6 +60,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     Button interactButton;
     OutputStream output;
     BufferedReader bufferedReader;
+    RelativeLayout relativeLayout;
     boolean sendChange = false;
     String change = "";
     int playerID;
@@ -66,6 +69,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     int eliminatable;
     int elimDist = 12;
     Marker nearby = null;
+    ImageView overlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,9 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
         interactButton = (Button) findViewById(R.id.interactButton);
         interactButton.setOnClickListener(this);
         interactButton.setEnabled(false);
+
+        relativeLayout = findViewById(R.id.GameplayRelative);
+        overlay = findViewById(R.id.overlay);
 
         playerID = getIntent().getExtras().getInt("playerID");
 
@@ -189,6 +196,19 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                     } else if (divided[0].equals("finishcap")) {
 
+                    } else if (divided[0].equals("eliminate")) {
+                        System.out.println("recieved eliminate");
+                        if (Integer.parseInt(divided[1]) == playerID) {
+                            System.out.println("dead");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    overlay.setVisibility(View.INVISIBLE);
+                                    //relativeLayout.bringChildToFront(overlay);
+                                    System.out.println("really_dead");
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -307,7 +327,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                             }
                         }
                     });
-
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
@@ -406,13 +425,14 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
     @Override
     public void onClick(View view) {
-        if (team.equals("capture")) {
+        if (team.equals("capture") && publicHrac.capture) {
             boolean cap = true;
             for (int i = 0; i < checkList.size(); i++) {
-                if (checkList.get(i).inside(hrac.getPosition())) {
+                if (checkList.get(i).inside(hrac.getPosition()) && checkList.get(i).capture) {
                     checkList.get(i).capture(i);
                     cap = false;
                     changeAsync("startcap_" + i);
+                    publicHrac.capture = false;
                     break;
                 }
             }
@@ -424,6 +444,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
     public static class publicHrac {
         static LatLng location;
+        static boolean capture = true;
     }
 
     public void changeAsync(String message) {
