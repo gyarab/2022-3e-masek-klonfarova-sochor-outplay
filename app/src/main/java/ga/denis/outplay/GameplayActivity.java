@@ -178,6 +178,25 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                                 interactButton.setEnabled(true);
                                             }
                                         });
+
+                                        helperLokace = locations[i];
+
+                                        if (nearby != null) {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    nearby.remove();
+                                                    nearby = mMap.addMarker(new MarkerOptions().position(helperLokace).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f,0.5f));
+                                                }
+                                            });
+                                        } else {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    nearby = mMap.addMarker(new MarkerOptions().position(helperLokace).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f,0.5f));
+                                                }
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -188,6 +207,15 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         interactButton.setEnabled(false);
                                     }
                                 });
+                                if (nearby != null) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            nearby.remove();
+                                            nearby = null;
+                                        }
+                                    });
+                                }
                             }
                         }
                     } else if (divided[0].equals("startcap")) {
@@ -377,13 +405,17 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                     eliminatable = i;
                                     elim = false;
                                     interactButton.setEnabled(true);
+                                    if (nearby != null) nearby.remove();
                                     nearby = mMap.addMarker(new MarkerOptions().position(locations[i]).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f,0.5f));
                                 }
                             }
                         }
                         if (elim) {
                             interactButton.setEnabled(false);
-                            nearby.remove();
+                            if (nearby != null) {
+                                nearby.remove();
+                                nearby = null;
+                            }
                         }
                     }
 
