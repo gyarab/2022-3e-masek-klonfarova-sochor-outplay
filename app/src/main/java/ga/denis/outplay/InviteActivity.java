@@ -34,6 +34,8 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     byte playerAmount = 0;
     TextView[] playerNames = new TextView[3];
     TextView myName;
+    Button[] team = new Button[3];
+    Button myTeam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +58,18 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         myName = findViewById(R.id.player1name);
         myName.setText(SocketHandler.getName());
 
+        myTeam = findViewById(R.id.player1button);
+
+        team[0] = findViewById(R.id.player2button);
+        team[1] = findViewById(R.id.player3button);
+        team[2] = findViewById(R.id.player4button);
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     System.out.println("attempting connection");
-                    SocketHandler.setSocket(new Socket("217.30.67.109", 10000));
+                    SocketHandler.setSocket(new Socket("142.132.174.213", 10000));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

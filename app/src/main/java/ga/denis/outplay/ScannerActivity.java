@@ -43,7 +43,7 @@ public class ScannerActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 try {
-                                    SocketHandler.setSocket(new Socket("217.30.67.109",10000));
+                                    SocketHandler.setSocket(new Socket("142.132.174.213", 10000));
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
