@@ -47,7 +47,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:text="@string/change"
+            android:text="@string/team_capture"
             app:cornerRadius="12dp" />
 
         <TextView
@@ -88,7 +88,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:text="@string/change"
+            android:text="@string/team_eliminate"
             app:cornerRadius="12dp" />
 
         <TextView
@@ -129,7 +129,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:text="@string/change"
+            android:text="@string/team_capture"
             app:cornerRadius="12dp" />
 
         <TextView
@@ -170,7 +170,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:text="@string/change"
+            android:text="@string/team_eliminate"
             app:cornerRadius="12dp" />
 
         <TextView
@@ -189,4 +189,5 @@
             android:textSize="30sp" />
 
     </RelativeLayout>
+
 </RelativeLayout>

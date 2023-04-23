@@ -21,7 +21,8 @@
     <string name="Czech">Czech</string>
     <string name="Germany">Germany</string>
     <string name="Interact">Interact</string>
-    <string name="change">Change team</string>
+    <string name="team_capture">capture</string>
+    <string name="team_eliminate">eliminate</string>
     <string name="go">Continue</string>
     <string name="playername">Enter your in-game name</string>
     <string name="zprava1">Waiting for host to start the game....</string>

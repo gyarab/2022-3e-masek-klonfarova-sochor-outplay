@@ -69,7 +69,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     int eliminatable;
     int elimDist = 12;
     Marker nearby = null;
-    ImageView overlay;
+    TextView overlay;
     LatLng helperLokace;
 
     @Override
@@ -85,8 +85,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
         interactButton.setOnClickListener(this);
         interactButton.setEnabled(false);
 
+        overlay = findViewById(R.id.elimView);
+
         relativeLayout = findViewById(R.id.GameplayRelative);
-        overlay = findViewById(R.id.overlay);
+        //overlay = findViewById(R.id.overlay);
 
         playerID = getIntent().getExtras().getInt("playerID");
 
@@ -232,7 +234,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    overlay.setVisibility(View.INVISIBLE);
+                                    overlay.setVisibility(View.VISIBLE);
                                     //relativeLayout.bringChildToFront(overlay);
                                     System.out.println("really_dead");
                                 }

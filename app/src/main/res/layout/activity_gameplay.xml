@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/GameplayRelative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:textAlignment="center">
 
-    <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/Gameplay"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".GameplayActivity" />
 
-    <!--<TextView
-        android:id="@+id/gameplayTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+    <ImageView
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
-        android:text="TextView"
-        android:textColor="#FFFFFF" />-->
+        android:scaleType="fitXY"
+        android:visibility="visible"
+        app:srcCompat="@drawable/red_overlay" />
 
     <Button
         android:id="@+id/interactButton"
@@ -37,20 +39,28 @@
         android:text="@string/Interact"
         android:textSize="20sp" />
 
-    <ImageView
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
+    <TextView
+        android:id="@+id/elimView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="250dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="ELIMINATED"
+        android:textColor="#A10D0D"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+    <!--<TextView
+        android:id="@+id/gameplayTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="0dp"
-        android:scaleType="fitXY"
-        android:visibility="visible"
-        app:srcCompat="@drawable/red_overlay" />
+        android:text="TextView"
+        android:textColor="#FFFFFF" />-->
 
 </RelativeLayout>

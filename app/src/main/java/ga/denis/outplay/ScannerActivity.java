@@ -17,7 +17,9 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.zxing.Result;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -68,7 +70,27 @@ public class ScannerActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
 
-                                startActivity(new Intent(ScannerActivity.this, WaitActivity.class));
+                                BufferedReader bufferedReader = null;
+
+                                try {
+                                    bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
+                                    if (bufferedReader != null) System.out.println("bufferedReader set");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                String message = "";
+
+                                while (!message.split("_")[0].equals("setID")) {
+                                    try {
+                                        message = bufferedReader.readLine();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                Intent intent = new Intent(ScannerActivity.this, WaitActivity.class);
+                                intent.putExtra("playerID", Integer.parseInt(message.split("_")[1]));
+                                startActivity(intent);
                             }
                         });
                         thread.start();

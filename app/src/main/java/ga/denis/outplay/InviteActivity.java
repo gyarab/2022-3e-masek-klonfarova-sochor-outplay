@@ -32,6 +32,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     Button inviteContinue;
     RelativeLayout[] players = new RelativeLayout[3];
     byte playerAmount = 0;
+    byte playerID = 2;
     TextView[] playerNames = new TextView[3];
     TextView myName;
     Button[] team = new Button[3];
@@ -63,6 +64,50 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
         team[0] = findViewById(R.id.player2button);
         team[1] = findViewById(R.id.player3button);
         team[2] = findViewById(R.id.player4button);
+
+        myTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myTeam.getText().equals("eliminate")) {
+                    myTeam.setText(getString(R.string.team_capture));
+                } else {
+                    myTeam.setText(getString(R.string.team_eliminate));
+                }
+            }
+        });
+
+        team[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (team[0].getText().equals("eliminate")) {
+                    team[0].setText(getString(R.string.team_capture));
+                } else {
+                    team[0].setText(getString(R.string.team_eliminate));
+                }
+            }
+        });
+
+        team[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (team[1].getText().equals("eliminate")) {
+                    team[1].setText(getString(R.string.team_capture));
+                } else {
+                    team[1].setText(getString(R.string.team_eliminate));
+                }
+            }
+        });
+
+        team[2].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (team[2].getText().equals("eliminate")) {
+                    team[2].setText(getString(R.string.team_capture));
+                } else {
+                    team[2].setText(getString(R.string.team_eliminate));
+                }
+            }
+        });
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -136,7 +181,12 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                                     playerAmount++;
                                 }
                             });
-
+                            try {
+                                output.write(("setID_" + playerID).getBytes());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            playerID++;
                         } else {
                             System.out.println("Players full");
                         }
@@ -200,13 +250,14 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     LatLng poly2 = getIntent().getExtras().getParcelable("poly2");
                     LatLng poly3 = getIntent().getExtras().getParcelable("poly3");
                     LatLng poly4 = getIntent().getExtras().getParcelable("poly4");
-                    output.write(("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + "eliminate_2").getBytes());
+                    output.write(("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + team[0].getText() +"_2" + "%startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + team[1].getText() + "_3" + "%startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + team[2].getText() + "_4").getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
                 Intent intent = getIntent();
                 intent.setClass(InviteActivity.this, GameplayActivity.class);
+                intent.putExtra("team", myTeam.getText());
                 startActivity(intent);
             }
         });
