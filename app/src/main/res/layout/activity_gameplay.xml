@@ -15,18 +15,6 @@
         android:layout_height="match_parent"
         tools:context=".GameplayActivity" />
 
-    <ImageView
-        android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:scaleType="fitXY"
-        android:visibility="visible"
-        app:srcCompat="@drawable/red_overlay" />
-
     <Button
         android:id="@+id/interactButton"
         android:layout_width="wrap_content"
@@ -52,6 +40,14 @@
         android:textSize="60sp"
         android:textStyle="bold"
         android:visibility="invisible" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifelim"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/loading"
+        android:visibility="gone"/>
 
     <!--<TextView
         android:id="@+id/gameplayTextView"

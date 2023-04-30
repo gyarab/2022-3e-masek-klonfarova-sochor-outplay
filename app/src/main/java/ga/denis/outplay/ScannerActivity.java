@@ -91,6 +91,8 @@ public class ScannerActivity extends AppCompatActivity {
                                 Intent intent = new Intent(ScannerActivity.this, WaitActivity.class);
                                 intent.putExtra("playerID", Integer.parseInt(message.split("_")[1]));
                                 startActivity(intent);
+                                finish();
+                                return;
                             }
                         });
                         thread.start();

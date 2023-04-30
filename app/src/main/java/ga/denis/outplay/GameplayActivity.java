@@ -8,9 +8,9 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,7 +42,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
@@ -64,7 +63,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     boolean sendChange = false;
     String change = "";
     int playerID;
-    String team;
+    String[] teams = new String[4];
     LatLng[] locations = new LatLng[4];
     int eliminatable;
     int elimDist = 12;
@@ -92,7 +91,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
         playerID = getIntent().getExtras().getInt("playerID");
 
-        team = getIntent().getExtras().getString("team");
+        for (int i = 0; i < 4; i++) {
+            teams[i] = getIntent().getExtras().getString("team" + (i + 1));
+            System.out.println(teams[i]);
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
@@ -163,17 +165,17 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                     if (divided[0].equals("loc")) {
                         System.out.println(divided[3]);
-                        locations[Integer.parseInt(divided[3])] = (new LatLng(Double.parseDouble(divided[1]), Double.parseDouble(divided[2])));
-                        System.out.println("Location of: " + divided[3] + " set to: " + locations[Integer.parseInt(divided[3])].longitude + " " + locations[Integer.parseInt(divided[3])].latitude);
+                        locations[Integer.parseInt(divided[3]) - 1] = (new LatLng(Double.parseDouble(divided[1]), Double.parseDouble(divided[2])));
+                        System.out.println("Location of: " + divided[3] + " set to: " + locations[Integer.parseInt(divided[3]) - 1].longitude + " " + locations[Integer.parseInt(divided[3]) - 1].latitude);
 
-                        if (team.equals("eliminate")) {
+                        if (teams[playerID - 1].equals("eliminate")) {
                             boolean elim = true;
                             for (int i = 0; i < locations.length; i++) {
-                                if (playerID != i && locations[i] != null) {
+                                if ((playerID - 1) != i && locations[i] != null && publicHrac.location != null && !teams[i].equals("eliminate")) {
                                     float[] results = new float[1];
                                     Location.distanceBetween(publicHrac.location.latitude, publicHrac.location.longitude, locations[i].latitude, locations[i].longitude, results);
                                     if (results[0] <= elimDist) {
-                                        eliminatable = i;
+                                        eliminatable = i + 1;
                                         elim = false;
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -235,7 +237,12 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                 @Override
                                 public void run() {
                                     overlay.setVisibility(View.VISIBLE);
-                                    //relativeLayout.bringChildToFront(overlay);
+                                    View view = LayoutInflater.from(GameplayActivity.this).inflate(R.layout.overlay, null);
+                                    relativeLayout.addView(view);
+                                    relativeLayout.bringChildToFront(view);
+                                    /*GifImageView gif = findViewById(R.id.gifelim);
+                                    gif.setVisibility(View.VISIBLE);
+                                    gif.*/
                                     System.out.println("really_dead");
                                 }
                             });
@@ -328,8 +335,8 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         checkList.add(new Checkpoint(mMap, latLng, "time"));
                                     }
 
-                                    if (checkList.size() >= 0) checkList.get(0).setTime(3);
-                                    if (checkList.size() >= 2) checkList.get(2).setTime(20);
+//                                    if (checkList.size() >= 1) checkList.get(0).setTime(3);
+//                                    if (checkList.size() >= 2) checkList.get(1).setTime(20);
                                 }
                                 //Checkpoint test = new Checkpoint(mMap, getIntent().getExtras().getParcelable("poly1"), me);
 
@@ -389,7 +396,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                     changePositionSmoothly(hrac, new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()));
 
-                    if (team.equals("capture")) {
+                    if (teams[playerID - 1].equals("capture")) {
                         boolean cap = true;
                         for (Checkpoint checkpoint : checkList) {
                             if (checkpoint.inside(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()))) {
@@ -398,14 +405,14 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                             }
                         }
                         if (cap) interactButton.setEnabled(false);
-                    } else if (team.equals("eliminate")) {
+                    } else if (teams[playerID - 1].equals("eliminate")) {
                         boolean elim = true;
                         for (int i = 0; i < locations.length; i++) {
-                            if (playerID != i && locations[i] != null) {
+                            if ((playerID - 1) != i && locations[i] != null && publicHrac.location != null && !teams[i].equals("eliminate")) {
                                 float[] results = new float[1];
                                 Location.distanceBetween(publicHrac.location.latitude, publicHrac.location.longitude, locations[i].latitude, locations[i].longitude, results);
                                 if (results[0] <= elimDist) {
-                                    eliminatable = i;
+                                    eliminatable = i + 1;
                                     elim = false;
                                     interactButton.setEnabled(true);
                                     if (nearby != null) nearby.remove();
@@ -460,7 +467,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
     @Override
     public void onClick(View view) {
-        if (team.equals("capture") && publicHrac.capture) {
+        if (teams[playerID - 1].equals("capture") && publicHrac.capture) {
             boolean cap = true;
             for (int i = 0; i < checkList.size(); i++) {
                 if (checkList.get(i).inside(hrac.getPosition()) && checkList.get(i).capture) {
@@ -472,7 +479,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                 }
             }
             if (cap) System.out.println("No checkpoint to capture");
-        } else if (team.equals("eliminate")) {
+        } else if (teams[playerID - 1].equals("eliminate")) {
                 changeAsync(("eliminate_" + eliminatable));
         }
     }

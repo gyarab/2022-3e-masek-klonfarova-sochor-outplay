@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
@@ -37,6 +38,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     TextView myName;
     Button[] team = new Button[3];
     Button myTeam;
+    boolean a = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +160,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
                 System.out.println("starting for");
 
-                for (;;) {
+                while (a) {
                     String message = "";
                     try {
                         message = bufferedReader.readLine();
@@ -250,15 +252,29 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     LatLng poly2 = getIntent().getExtras().getParcelable("poly2");
                     LatLng poly3 = getIntent().getExtras().getParcelable("poly3");
                     LatLng poly4 = getIntent().getExtras().getParcelable("poly4");
-                    output.write(("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + team[0].getText() +"_2" + "%startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + team[1].getText() + "_3" + "%startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + team[2].getText() + "_4").getBytes());
+                    String message = ("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + myTeam.getText() + "_" + team[0].getText() + "_" + team[1].getText() + "_" + team[2].getText());
+
+                    ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
+
+                    for (LatLng lokace : tempList) {
+                        message = (message + "_" + lokace.latitude + "_" + lokace.longitude);
+                    }
+
+                    output.write(message.getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
                 Intent intent = getIntent();
                 intent.setClass(InviteActivity.this, GameplayActivity.class);
-                intent.putExtra("team", myTeam.getText());
+                intent.putExtra("team1", myTeam.getText());
+                intent.putExtra("team2", team[0].getText());
+                intent.putExtra("team3", team[1].getText());
+                intent.putExtra("team4", team[2].getText());
+                a = false;
                 startActivity(intent);
+                finish();
+                return;
             }
         });
         thread.start();

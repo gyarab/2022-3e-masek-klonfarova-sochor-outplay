@@ -18,7 +18,7 @@ public class Checkpoint {
     Marker me;
     //Marker hrac;
     String type;
-    int time = 8;
+    int time = 10;
     int cas;
     boolean capturing = false;
     int id;

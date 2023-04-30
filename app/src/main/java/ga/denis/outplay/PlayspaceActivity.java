@@ -40,10 +40,15 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
     private ActivityPlayspaceBinding binding;
     private FusedLocationProviderClient fusedLocationClient;
     Button startButton;
+    Button addButton;
+    Button removeButton;
     Marker poly1;
     Marker poly2;
     Marker poly3;
     Marker poly4;
+    ArrayList<Checkpoint> list = new ArrayList();
+    ArrayList<LatLng> lokace = new ArrayList<>();
+    ArrayList<Marker> markers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,25 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
 
         startButton = (Button) findViewById(R.id.startButton);
         startButton.setOnClickListener(this);
+
+        addButton = (Button) findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 50d, 50d, "time"));
+                markers.add(list.get(list.size() - 1).me);
+            }
+        });
+
+        removeButton = (Button) findViewById(R.id.removeButton);
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                list.get(list.size() - 1).me.remove();
+                markers.remove(markers.size() - 1);
+                list.remove(list.size() - 1);
+            }
+        });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager()
@@ -99,6 +123,25 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
         mMap.getUiSettings().setMapToolbarEnabled(false);
         //mMap.getUiSettings().setZoomGesturesEnabled(false);
 
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDrag(@NonNull Marker marker) {
+                System.out.println(marker.getPosition());
+                marker.setPosition(marker.getPosition());
+            }
+
+            @Override
+            public void onMarkerDragEnd(@NonNull Marker marker) {
+
+
+            }
+
+            @Override
+            public void onMarkerDragStart(@NonNull Marker marker) {
+
+            }
+        });
+
         if (ContextCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED) {
@@ -130,22 +173,22 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
                                         bearing(0).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                                    @Override
-                                    public void onMarkerDrag(@NonNull Marker marker) {
-
-                                    }
-
-                                    @Override
-                                    public void onMarkerDragEnd(@NonNull Marker marker) {
-                                        marker.setPosition(marker.getPosition());
-                                    }
-
-                                    @Override
-                                    public void onMarkerDragStart(@NonNull Marker marker) {
-
-                                    }
-                                });
+//                                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+//                                    @Override
+//                                    public void onMarkerDrag(@NonNull Marker marker) {
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onMarkerDragEnd(@NonNull Marker marker) {
+//                                        marker.setPosition(marker.getPosition());
+//                                    }
+//
+//                                    @Override
+//                                    public void onMarkerDragStart(@NonNull Marker marker) {
+//
+//                                    }
+//                                });
                             }
                         }
                     });
@@ -161,8 +204,6 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(PlayspaceActivity.this, InviteActivity.class);
-        ArrayList<Checkpoint> list = new ArrayList();
-        ArrayList<LatLng> lokace = new ArrayList<>();
         //list.add(new Checkpoint(mMap,poly1.getPosition(),null));
         //list.add(new Checkpoint(mMap,poly3.getPosition(),null));
         //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 40d, 40d, null));
@@ -171,11 +212,12 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
         //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 0d, null));
         //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 0d, 100d, null));
         //list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 0d, null));
-        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 100d, "time"));
+        /*list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 100d, 100d, "time"));
         list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 30d, 10d, "time"));
-        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 50d, 50d, "time"));
-        for (Checkpoint checkpoint : list) {
-            lokace.add(checkpoint.getLocation());
+        list.add(new Checkpoint(mMap, poly1.getPosition(), poly2.getPosition(), poly3.getPosition(), poly4.getPosition(), 50d, 50d, "time"));*/
+        for (Marker checkpoint : markers) {
+            System.out.println(checkpoint.getPosition());
+            lokace.add(checkpoint.getPosition());
         }
         intent.putExtra("poly1", poly1.getPosition());
         intent.putExtra("poly2", poly2.getPosition());
@@ -185,5 +227,7 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
         intent.putExtra("playerID", 1);
         //intent.putExtra("gameID", getIntent().getExtras().getString("gameID"));
         startActivity(intent);
+        finish();
+        return;
     }
 }

@@ -27,6 +27,9 @@
     <string name="playername">Enter your in-game name</string>
     <string name="zprava1">Waiting for host to start the game....</string>
     <string name="zprava2">Your name should be on the host screen</string>
+    <string name="confirm">Confirm</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
 
     <string-array name="ListLanguage">
         <item>English</item>

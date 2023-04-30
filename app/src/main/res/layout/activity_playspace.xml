@@ -20,5 +20,25 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="0dp"
-        android:text="Button" />
+        android:text="@string/confirm" />
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toStartOf="@+id/startButton"
+        android:text="@string/add" />
+
+    <Button
+        android:id="@+id/removeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/startButton"
+        android:text="@string/remove" />
 </RelativeLayout>
