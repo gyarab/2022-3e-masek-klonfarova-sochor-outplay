@@ -3,8 +3,10 @@ package ga.denis.outplay;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -43,14 +45,20 @@ public class MainActivity extends AppCompatActivity {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        ;
 
+        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
 
         Button n = findViewById(R.id.newGame);
 
         Button join = findViewById(R.id.joinGame);
 
         TextInputEditText text = findViewById(R.id.playername);
+
+        text.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+
+        if (sharedPref.contains("name")) {
+            text.setText(sharedPref.getString("name", ""));
+        }
 
         setSupportActionBar(binding.appBarMain.toolbar);
         n.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 if (name.contains("_")) {
                     Toast.makeText(getApplicationContext(), "Name must not contain an underscore", Toast.LENGTH_SHORT).show();
                 } else if (!name.equals("")) {
+                    sharedPref.edit().putString("name", name).apply();
                     SocketHandler.setName(name);
                     Intent intent = new Intent(MainActivity.this, PlayspaceActivity.class);
                     startActivity(intent);
@@ -78,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 if (name.contains("_")) {
                     Toast.makeText(getApplicationContext(), "Name must not contain an underscore", Toast.LENGTH_SHORT).show();
                 } else if (!name.equals("")) {
+                    sharedPref.edit().putString("name", name).apply();
                     SocketHandler.setName(name);
                     Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
                     startActivity(intent);
