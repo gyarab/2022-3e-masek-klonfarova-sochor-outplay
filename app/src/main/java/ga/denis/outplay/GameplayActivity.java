@@ -45,6 +45,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import ga.denis.outplay.databinding.ActivityGameplayBinding;
+import pl.droidsonroids.gif.GifImageView;
 
 public class GameplayActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
@@ -54,7 +55,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     private Marker hrac;
     //private boolean f = false;
     //TextView bearing;
-    ArrayList<Checkpoint> checkList = new ArrayList<>();
     Location previous = null;
     Button interactButton;
     OutputStream output;
@@ -228,7 +228,13 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     } else if (divided[0].equals("stopcap")) {
 
                     } else if (divided[0].equals("finishcap")) {
-
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_entered.bmp"));
+                                checkPoints.checkList.remove(Integer.parseInt(divided[1]));
+                            }
+                        });
                     } else if (divided[0].equals("eliminate")) {
                         System.out.println("recieved eliminate");
                         if (Integer.parseInt(divided[1]) == playerID) {
@@ -240,9 +246,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                     View view = LayoutInflater.from(GameplayActivity.this).inflate(R.layout.overlay, null);
                                     relativeLayout.addView(view);
                                     relativeLayout.bringChildToFront(view);
-                                    /*GifImageView gif = findViewById(R.id.gifelim);
-                                    gif.setVisibility(View.VISIBLE);
-                                    gif.*/
                                     System.out.println("really_dead");
                                 }
                             });
@@ -332,8 +335,41 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                 if (getIntent().hasExtra("checkLoc")) {
                                     ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
                                     for (LatLng latLng : tempList) {
-                                        checkList.add(new Checkpoint(mMap, latLng, "time"));
+                                        checkPoints.checkList.add(new Checkpoint(mMap, latLng, "time"));
                                     }
+
+                                    Thread thread = new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (;;) {
+                                                if (checkPoints.checkList.size() == 0) {
+                                                    if (teams[playerID - 1].equals("capture")) {
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                GifImageView gif = findViewById(R.id.gifelim);
+                                                                gif.setVisibility(View.VISIBLE);
+                                                                overlay.setVisibility(View.VISIBLE);
+                                                                overlay.setText("YOU WON");
+                                                            }
+                                                        });
+                                                    } else {
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                overlay.setVisibility(View.VISIBLE);
+                                                                overlay.setText("YOU LOST");
+                                                            }
+                                                        });
+                                                    }
+                                                } else if (true) {
+
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                    thread.start();
 
 //                                    if (checkList.size() >= 1) checkList.get(0).setTime(3);
 //                                    if (checkList.size() >= 2) checkList.get(1).setTime(20);
@@ -398,7 +434,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                     if (teams[playerID - 1].equals("capture")) {
                         boolean cap = true;
-                        for (Checkpoint checkpoint : checkList) {
+                        for (Checkpoint checkpoint : checkPoints.checkList) {
                             if (checkpoint.inside(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()))) {
                                 cap = false;
                                 interactButton.setEnabled(true);
@@ -469,9 +505,9 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     public void onClick(View view) {
         if (teams[playerID - 1].equals("capture") && publicHrac.capture) {
             boolean cap = true;
-            for (int i = 0; i < checkList.size(); i++) {
-                if (checkList.get(i).inside(hrac.getPosition()) && checkList.get(i).capture) {
-                    checkList.get(i).capture(i);
+            for (int i = 0; i < checkPoints.checkList.size(); i++) {
+                if (checkPoints.checkList.get(i).inside(hrac.getPosition()) && checkPoints.checkList.get(i).capture) {
+                    checkPoints.checkList.get(i).capture(i);
                     cap = false;
                     changeAsync("startcap_" + i);
                     publicHrac.capture = false;
@@ -487,6 +523,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     public static class publicHrac {
         static LatLng location;
         static boolean capture = true;
+    }
+
+    public static class checkPoints {
+        static ArrayList<Checkpoint> checkList = new ArrayList<>();
     }
 
     public void changeAsync(String message) {

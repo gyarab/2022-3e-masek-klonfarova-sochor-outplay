@@ -29,7 +29,7 @@ public class Checkpoint {
         this.mMap = mMap;
         this.type = type;
         //this.hrac = hrac;
-        me = mMap.addMarker(new MarkerOptions().position(lokace).title("Checkpoint").icon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
+        me = mMap.addMarker(new MarkerOptions().position(lokace).title("Checkpoint").icon(BitmapDescriptorFactory.fromAsset("checkpoint_0.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
     }
 
     public Checkpoint(GoogleMap mMap, LatLng poly1, LatLng poly2, LatLng poly3, LatLng poly4, Double x, Double y/*, @Nullable Marker hrac*/, String type) {
@@ -83,6 +83,8 @@ public class Checkpoint {
                         send("finishcap_" + id);
                         GameplayActivity.publicHrac.capture = true;
                         capture = false;
+                        GameplayActivity.checkPoints.checkList.remove(id);
+                        System.out.println(GameplayActivity.checkPoints.checkList.size());
                     }
                     else if (inside(GameplayActivity.publicHrac.location)) {
                         cas--;

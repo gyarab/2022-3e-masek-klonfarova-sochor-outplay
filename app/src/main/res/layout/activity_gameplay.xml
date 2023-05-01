@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="350dp"
         android:fontFamily="sans-serif-medium"
         android:text="ELIMINATED"
         android:textColor="#A10D0D"
@@ -44,10 +44,10 @@
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gifelim"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="300dp"
         android:layout_marginTop="12dp"
-        android:src="@drawable/loading"
-        android:visibility="gone"/>
+        android:src="@drawable/birb"
+        android:visibility="invisible" />
 
     <!--<TextView
         android:id="@+id/gameplayTextView"

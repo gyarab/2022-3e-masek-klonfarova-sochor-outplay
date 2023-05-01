@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class WaitActivity extends AppCompatActivity {
     BufferedReader bufferedReader;
+    boolean a = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class WaitActivity extends AppCompatActivity {
                 String message = "";
                 String[] divided = null;
 
-                for (; ; ) {
+                while (a) {
                     try {
                         message = bufferedReader.readLine();
                         divided = message.split("_");
@@ -61,9 +62,12 @@ public class WaitActivity extends AppCompatActivity {
                             intent.putExtra("checkLoc", lokace);
 
                             //intent.putExtra("playerID", Integer.parseInt(divided[10]));
+                            a = false;
+
                             startActivity(intent);
                             finish();
-                            return;
+                            break;
+
 //                              else if (divided2[0].equals("startgame") && Integer.parseInt(divided2[10]) == getIntent().getExtras().getInt("playerID")) {
 //                                Intent intent = getIntent();
 //                                intent.setClass(WaitActivity.this, GameplayActivity.class);
@@ -90,7 +94,7 @@ public class WaitActivity extends AppCompatActivity {
 //                                return;
 //                            }
                         }
-
+                        return;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
