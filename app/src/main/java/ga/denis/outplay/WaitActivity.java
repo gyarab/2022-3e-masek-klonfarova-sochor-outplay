@@ -33,6 +33,7 @@ public class WaitActivity extends AppCompatActivity {
                 String[] divided = null;
 
                 while (a) {
+                    System.out.println("bezim lol");
                     try {
                         message = bufferedReader.readLine();
                         divided = message.split("_");
@@ -94,13 +95,14 @@ public class WaitActivity extends AppCompatActivity {
 //                                return;
 //                            }
                         }
-                        return;
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
 
                 }
+                return;
             }
         });
         thread.start();

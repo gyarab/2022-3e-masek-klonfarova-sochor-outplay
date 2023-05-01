@@ -25,79 +25,85 @@ import java.net.Socket;
 
 public class ScannerActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
+    boolean a = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA},1);;
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
             public void onDecoded(@NonNull final Result result) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ScannerActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+                if (a) {
+                    a = false;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ScannerActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
 
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    SocketHandler.setSocket(new Socket("142.132.174.213", 10000));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                OutputStream output = null;
-
-                                try {
-                                    output = SocketHandler.getSocket().getOutputStream();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                try {
-                                    output.write(result.getText().getBytes());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                try {
-                                    output.write(("addplayer_" + SocketHandler.getName()).getBytes());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                BufferedReader bufferedReader = null;
-
-                                try {
-                                    bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
-                                    if (bufferedReader != null) System.out.println("bufferedReader set");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                String message = "";
-
-                                while (!message.split("_")[0].equals("setID")) {
+                            Thread thread = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
                                     try {
-                                        message = bufferedReader.readLine();
+                                        SocketHandler.setSocket(new Socket("142.132.174.213", 10000));
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                }
 
-                                Intent intent = new Intent(ScannerActivity.this, WaitActivity.class);
-                                intent.putExtra("playerID", Integer.parseInt(message.split("_")[1]));
-                                startActivity(intent);
-                                finish();
-                                return;
-                            }
-                        });
-                        thread.start();
-                    }
-                });
+                                    OutputStream output = null;
+
+                                    try {
+                                        output = SocketHandler.getSocket().getOutputStream();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    try {
+                                        output.write(result.getText().getBytes());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    try {
+                                        output.write(("addplayer_" + SocketHandler.getName()).getBytes());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    BufferedReader bufferedReader = null;
+
+                                    try {
+                                        bufferedReader = new BufferedReader(new InputStreamReader(SocketHandler.getSocket().getInputStream()));
+                                        if (bufferedReader != null)
+                                            System.out.println("bufferedReader set");
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    String message = "";
+
+                                    while (!message.split("_")[0].equals("setID")) {
+                                        try {
+                                            message = bufferedReader.readLine();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    Intent intent = new Intent(ScannerActivity.this, WaitActivity.class);
+                                    intent.putExtra("playerID", Integer.parseInt(message.split("_")[1]));
+                                    startActivity(intent);
+                                    finish();
+                                    return;
+                                }
+                            });
+                            thread.start();
+                        }
+                    });
+                }
             }
         });
         scannerView.setOnClickListener(new View.OnClickListener() {

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +36,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.PolyUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -70,6 +73,10 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
     Marker nearby = null;
     TextView overlay;
     LatLng helperLokace;
+    boolean inside = true;
+    Polygon polygon;
+    int kick = 10;
+    boolean venku = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,7 +178,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                         if (teams[playerID - 1].equals("eliminate")) {
                             boolean elim = true;
                             for (int i = 0; i < locations.length; i++) {
-                                if ((playerID - 1) != i && locations[i] != null && publicHrac.location != null && !teams[i].equals("eliminate")) {
+                                if ((playerID - 1) != i && locations[i] != null && publicHrac.location != null && teams[i].equals("capture")) {
                                     float[] results = new float[1];
                                     Location.distanceBetween(publicHrac.location.latitude, publicHrac.location.longitude, locations[i].latitude, locations[i].longitude, results);
                                     if (results[0] <= elimDist) {
@@ -232,7 +239,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp"));
+                                    checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_entered.bmp"));
                                     checkPoints.checkList.remove(Integer.parseInt(divided[1]));
                                 }
                             });
@@ -240,7 +247,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_entered.bmp"));
+                                    checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp"));
                                     checkPoints.checkList.remove(Integer.parseInt(divided[1]));
                                 }
                             });
@@ -248,7 +255,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     } else if (divided[0].equals("eliminate")) {
                         System.out.println("recieved eliminate");
 
-                        teams[Integer.parseInt(divided[1]) - 1] = "nic";
+
 
                         if (Integer.parseInt(divided[1]) == playerID) {
                             System.out.println("dead");
@@ -256,6 +263,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                 @Override
                                 public void run() {
                                     overlay.setVisibility(View.VISIBLE);
+                                    overlay.setText("ELIMINATED");
                                     View view = LayoutInflater.from(GameplayActivity.this).inflate(R.layout.overlay, null);
                                     relativeLayout.addView(view);
                                     relativeLayout.bringChildToFront(view);
@@ -263,6 +271,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                 }
                             });
                         }
+                        teams[Integer.parseInt(divided[1]) - 1] = "nic";
                     }
                 }
             }
@@ -313,6 +322,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             // You can use the API that requires the permission.
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @SuppressLint("PotentialBehaviorOverride")
                         @Override
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
@@ -343,7 +353,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
                                 hrac = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("player.bmp")).flat(true).anchor(0.5f, 0.5f));
-                                mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly3"), getIntent().getExtras().getParcelable("poly4")));
+                                polygon = mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly3"), getIntent().getExtras().getParcelable("poly4")));
 
                                 if (getIntent().hasExtra("checkLoc")) {
                                     ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
@@ -487,10 +497,68 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                             }
                         }
                         if (cap) interactButton.setEnabled(false);
+
+
+
+                        if (!PolyUtil.containsLocation(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()), polygon.getPoints(), false)) {
+                            inside = false;
+
+                            if (venku) {
+                                final Handler handler = new Handler();
+                                Runnable runnable = new Runnable() {
+                                    public void run() {
+                                        System.out.println("jedeeem");
+                                        if (kick == 0) {
+                                            changeAsync(("eliminate_" + playerID));
+
+
+
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    overlay.setVisibility(View.VISIBLE);
+                                                    overlay.setText("ELIMINATED");
+                                                    View view = LayoutInflater.from(GameplayActivity.this).inflate(R.layout.overlay, null);
+                                                    relativeLayout.addView(view);
+                                                    relativeLayout.bringChildToFront(view);
+                                                    System.out.println("really_dead");
+                                                }
+                                            });
+
+                                            teams[playerID - 1] = "nic";
+                                        } else if (!inside) {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    venku = false;
+                                                    kick--;
+                                                    overlay.setVisibility(View.VISIBLE);
+                                                    overlay.setText(String.valueOf(kick));
+                                                }
+                                            });
+                                            handler.postDelayed(this, 1000);
+                                        } else {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    overlay.setVisibility(View.INVISIBLE);
+                                                    venku = true;
+                                                }
+                                            });
+                                        }
+                                    }
+                                };
+                                runnable.run();
+                            }
+                        } else {
+                            inside = true;
+                            kick = 10;
+                        }
+
                     } else if (teams[playerID - 1].equals("eliminate")) {
                         boolean elim = true;
                         for (int i = 0; i < locations.length; i++) {
-                            if ((playerID - 1) != i && locations[i] != null && publicHrac.location != null && !teams[i].equals("eliminate")) {
+                            if ((playerID - 1) != i && locations[i] != null && publicHrac.location != null && teams[i].equals("capture")) {
                                 float[] results = new float[1];
                                 Location.distanceBetween(publicHrac.location.latitude, publicHrac.location.longitude, locations[i].latitude, locations[i].longitude, results);
                                 if (results[0] <= elimDist) {

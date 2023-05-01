@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     SocketHandler.setName(name);
                     Intent intent = new Intent(MainActivity.this, PlayspaceActivity.class);
                     startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(getApplicationContext(),"You must choose a name", Toast.LENGTH_SHORT).show();
                 }
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 SocketHandler.setName(name);
                 Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
                 startActivity(intent);
+                finish();
                 } else {
                     Toast.makeText(getApplicationContext(),"You must choose a name", Toast.LENGTH_SHORT).show();
                 }

@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
     TextView myName;
     Button[] team = new Button[3];
     Button myTeam;
-    boolean a = true;
+    boolean alfons = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +159,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
                 System.out.println("starting for");
 
-                while (a) {
+                while (alfons) {
                     String message = "";
                     try {
                         message = bufferedReader.readLine();
@@ -311,7 +310,7 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                         break;
                 }
 
-                a = false;
+                alfons = false;
                 startActivity(intent);
                 finish();
                 return;
