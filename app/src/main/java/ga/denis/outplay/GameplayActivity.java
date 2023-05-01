@@ -120,7 +120,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                 }
 
                 LatLng location = publicHrac.location;
-                for (;;) {
+                for (; ; ) {
                     if (location != publicHrac.location) {
                         location = publicHrac.location;
                         String lokace = "loc_" + location.latitude + "_" + location.longitude + "_" + playerID;
@@ -155,7 +155,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     e.printStackTrace();
                 }
                 String message = "";
-                for (;;) {
+                for (; ; ) {
                     try {
                         message = bufferedReader.readLine();
                     } catch (IOException e) {
@@ -191,14 +191,14 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                                 @Override
                                                 public void run() {
                                                     nearby.remove();
-                                                    nearby = mMap.addMarker(new MarkerOptions().position(helperLokace).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f,0.5f));
+                                                    nearby = mMap.addMarker(new MarkerOptions().position(helperLokace).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f, 0.5f));
                                                 }
                                             });
                                         } else {
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    nearby = mMap.addMarker(new MarkerOptions().position(helperLokace).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f,0.5f));
+                                                    nearby = mMap.addMarker(new MarkerOptions().position(helperLokace).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f, 0.5f));
                                                 }
                                             });
                                         }
@@ -228,15 +228,28 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                     } else if (divided[0].equals("stopcap")) {
 
                     } else if (divided[0].equals("finishcap")) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_entered.bmp"));
-                                checkPoints.checkList.remove(Integer.parseInt(divided[1]));
-                            }
-                        });
+                        if (teams[playerID - 1].equals("eliminate")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp"));
+                                    checkPoints.checkList.remove(Integer.parseInt(divided[1]));
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    checkPoints.checkList.get(Integer.parseInt(divided[1])).me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_entered.bmp"));
+                                    checkPoints.checkList.remove(Integer.parseInt(divided[1]));
+                                }
+                            });
+                        }
                     } else if (divided[0].equals("eliminate")) {
                         System.out.println("recieved eliminate");
+
+                        teams[Integer.parseInt(divided[1]) - 1] = "nic";
+
                         if (Integer.parseInt(divided[1]) == playerID) {
                             System.out.println("dead");
                             runOnUiThread(new Runnable() {
@@ -321,7 +334,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 
                                     }
                                 });
-                                LatLng pozice = new LatLng(location.getLatitude(),location.getLongitude());
+                                LatLng pozice = new LatLng(location.getLatitude(), location.getLongitude());
                                 CameraPosition position = new CameraPosition.Builder().
                                         target(pozice).
                                         tilt(60).
@@ -329,7 +342,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         bearing(0).
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-                                hrac = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("player.bmp")).flat(true).anchor(0.5f,0.5f));
+                                hrac = mMap.addMarker(new MarkerOptions().position(pozice).title("Current position").icon(BitmapDescriptorFactory.fromAsset("player.bmp")).flat(true).anchor(0.5f, 0.5f));
                                 mMap.addPolygon(new PolygonOptions().strokeColor(Color.YELLOW).add(getIntent().getExtras().getParcelable("poly1"), getIntent().getExtras().getParcelable("poly2"), getIntent().getExtras().getParcelable("poly3"), getIntent().getExtras().getParcelable("poly4")));
 
                                 if (getIntent().hasExtra("checkLoc")) {
@@ -341,7 +354,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                     Thread thread = new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            for (;;) {
+                                            for (; ; ) {
                                                 if (checkPoints.checkList.size() == 0) {
                                                     if (teams[playerID - 1].equals("capture")) {
                                                         runOnUiThread(new Runnable() {
@@ -353,6 +366,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                                                 overlay.setText("YOU WON");
                                                             }
                                                         });
+                                                        break;
                                                     } else {
                                                         runOnUiThread(new Runnable() {
                                                             @Override
@@ -361,9 +375,41 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                                                 overlay.setText("YOU LOST");
                                                             }
                                                         });
+                                                        break;
                                                     }
-                                                } else if (true) {
+                                                } else {
+                                                    boolean a = true;
+                                                    for (String s :
+                                                            teams) {
+//                                                        System.out.println(s);
+                                                        if (s.equals("capture")) {
+                                                            a = false;
+                                                            break;
+                                                        }
+                                                    }
 
+                                                    if (a) {
+                                                        if (teams[playerID - 1].equals("eliminate")) {
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    GifImageView gif = findViewById(R.id.gifelim);
+                                                                    gif.setVisibility(View.VISIBLE);
+                                                                    overlay.setVisibility(View.VISIBLE);
+                                                                    overlay.setText("YOU WON");
+                                                                }
+                                                            });
+                                                        } else {
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    overlay.setVisibility(View.VISIBLE);
+                                                                    overlay.setText("YOU LOST");
+                                                                }
+                                                            });
+                                                        }
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
@@ -404,7 +450,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-                    ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
         LocationRequest.Builder locationRequest = new LocationRequest.Builder(1000);
@@ -414,7 +460,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
 //        locationRequest.setInterval(2000);
 //        locationRequest.setFastestInterval(1000);
 
-        fusedLocationClient.requestLocationUpdates(locationRequest.build(),new LocationCallback() {
+        fusedLocationClient.requestLocationUpdates(locationRequest.build(), new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
@@ -452,7 +498,7 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                     elim = false;
                                     interactButton.setEnabled(true);
                                     if (nearby != null) nearby.remove();
-                                    nearby = mMap.addMarker(new MarkerOptions().position(locations[i]).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f,0.5f));
+                                    nearby = mMap.addMarker(new MarkerOptions().position(locations[i]).title("Nearby player").icon(BitmapDescriptorFactory.fromAsset("ping.bmp")).flat(true).anchor(0.5f, 0.5f));
                                 }
                             }
                         }
@@ -516,7 +562,13 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
             }
             if (cap) System.out.println("No checkpoint to capture");
         } else if (teams[playerID - 1].equals("eliminate")) {
-                changeAsync(("eliminate_" + eliminatable));
+            changeAsync(("eliminate_" + eliminatable));
+            teams[eliminatable - 1] = "nic";
+
+            for (String s :
+                    teams) {
+                System.out.println(s);
+            }
         }
     }
 

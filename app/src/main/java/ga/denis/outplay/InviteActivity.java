@@ -252,7 +252,23 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
                     LatLng poly2 = getIntent().getExtras().getParcelable("poly2");
                     LatLng poly3 = getIntent().getExtras().getParcelable("poly3");
                     LatLng poly4 = getIntent().getExtras().getParcelable("poly4");
-                    String message = ("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + myTeam.getText() + "_" + team[0].getText() + "_" + team[1].getText() + "_" + team[2].getText());
+
+                    String message = "";
+
+                    switch (playerAmount) {
+                        case 0:
+                            message = ("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + myTeam.getText() + "_" + "nic" + "_" + "nic" + "_" + "nic");
+                            break;
+                        case 1:
+                            message = ("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + myTeam.getText() + "_" + team[0].getText() + "_" + "nic" + "_" + "nic");
+                            break;
+                        case 2:
+                            message = ("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + myTeam.getText() + "_" + team[0].getText() + "_" + team[1].getText() + "_" + "nic");
+                            break;
+                        case 3:
+                            message = ("startgame_" + poly1.latitude + "_" + poly1.longitude + "_" + poly2.latitude + "_" + poly2.longitude + "_" + poly3.latitude + "_" + poly3.longitude + "_" + poly4.latitude + "_" + poly4.longitude + "_" + myTeam.getText() + "_" + team[0].getText() + "_" + team[1].getText() + "_" + team[2].getText());
+                            break;
+                    }
 
                     ArrayList<LatLng> tempList = getIntent().getExtras().getParcelableArrayList("checkLoc");
 
@@ -267,10 +283,34 @@ public class InviteActivity extends AppCompatActivity implements View.OnClickLis
 
                 Intent intent = getIntent();
                 intent.setClass(InviteActivity.this, GameplayActivity.class);
-                intent.putExtra("team1", myTeam.getText());
-                intent.putExtra("team2", team[0].getText());
-                intent.putExtra("team3", team[1].getText());
-                intent.putExtra("team4", team[2].getText());
+
+                switch (playerAmount) {
+                    case 0:
+                        intent.putExtra("team1", myTeam.getText());
+                        intent.putExtra("team2", "nic");
+                        intent.putExtra("team3", "nic");
+                        intent.putExtra("team4", "nic");
+                        break;
+                    case 1:
+                        intent.putExtra("team1", myTeam.getText());
+                        intent.putExtra("team2", team[0].getText());
+                        intent.putExtra("team3", "nic");
+                        intent.putExtra("team4", "nic");
+                        break;
+                    case 2:
+                        intent.putExtra("team1", myTeam.getText());
+                        intent.putExtra("team2", team[0].getText());
+                        intent.putExtra("team3", team[1].getText());
+                        intent.putExtra("team4", "nic");
+                        break;
+                    case 3:
+                        intent.putExtra("team1", myTeam.getText());
+                        intent.putExtra("team2", team[0].getText());
+                        intent.putExtra("team3", team[1].getText());
+                        intent.putExtra("team4", team[2].getText());
+                        break;
+                }
+
                 a = false;
                 startActivity(intent);
                 finish();
