@@ -152,7 +152,7 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
-                                LatLng pozice = new LatLng(location.getLatitude(),location.getLongitude());
+                                LatLng pozice = new LatLng(location.getLatitude(), location.getLongitude());
                                 CameraPosition position = new CameraPosition.Builder().
                                         target(pozice).
                                         tilt(0).
@@ -161,11 +161,11 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
                                         build();
                                 mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
                                 mMap.setOnMarkerClickListener(marker -> true);
-                                mMap.addMarker(new MarkerOptions().position(pozice)/*.title("Current position")*/.icon(BitmapDescriptorFactory.fromAsset("location.bmp")).flat(true).anchor(0.5f,0.5f));
-                                poly1 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
-                                poly2 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
-                                poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
-                                poly4 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f,0.5f));
+                                mMap.addMarker(new MarkerOptions().position(pozice)/*.title("Current position")*/.icon(BitmapDescriptorFactory.fromAsset("location.bmp")).flat(true).anchor(0.5f, 0.5f));
+                                poly1 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f, 0.5f));
+                                poly2 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().farRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f, 0.5f));
+                                poly3 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearRight).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f, 0.5f));
+                                poly4 = mMap.addMarker(new MarkerOptions().position(mMap.getProjection().getVisibleRegion().nearLeft).title("Playspace corner").icon(BitmapDescriptorFactory.fromAsset("crosshair.bmp")).draggable(true).flat(true).anchor(0.5f, 0.5f));
                                 CameraPosition cameraPosition = new CameraPosition.Builder().
                                         target(pozice).
                                         tilt(0).
@@ -196,7 +196,7 @@ public class PlayspaceActivity extends FragmentActivity implements OnMapReadyCal
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
     }

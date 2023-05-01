@@ -29,7 +29,7 @@ public class Checkpoint {
         this.mMap = mMap;
         this.type = type;
         //this.hrac = hrac;
-        me = mMap.addMarker(new MarkerOptions().position(lokace).title("Checkpoint").icon(BitmapDescriptorFactory.fromAsset("checkpoint_0.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
+        me = mMap.addMarker(new MarkerOptions().position(lokace).title("Checkpoint").icon(BitmapDescriptorFactory.fromAsset("checkpoint_0.bmp")).flat(true).anchor(0.5f, 0.5f).draggable(true));
     }
 
     public Checkpoint(GoogleMap mMap, LatLng poly1, LatLng poly2, LatLng poly3, LatLng poly4, Double x, Double y/*, @Nullable Marker hrac*/, String type) {
@@ -39,7 +39,7 @@ public class Checkpoint {
         //this.lokace = new LatLng((poly1.latitude + ((poly2.latitude - poly1.latitude) * y / 100)) + (y / 100 * ((poly4.latitude + ((poly3.latitude - poly4.latitude) * y / 100)) - (poly1.latitude + ((poly2.latitude - poly1.latitude) * y / 100)))), (poly1.longitude + ((poly2.longitude - poly1.longitude) * x / 100)) + (x / 100 * ((poly4.longitude + ((poly3.longitude - poly4.longitude) * x / 100)) - (poly1.longitude + ((poly2.longitude - poly1.longitude) * x / 100)))));
         //this.lokace = new LatLng((((poly1.longitude * (100 - y) + poly4.longitude * y) / 100) * (100 - x) + ((poly2.longitude * (100 - y) + poly3.longitude * y) / 100) * x) / 100, (((poly1.latitude * (100 - x) + poly2.latitude * x) / 100) * (100 - y) + ((poly4.latitude * (100 - x) + poly3.latitude * x) / 100) * y) / 100);
         this.lokace = new LatLng((((poly1.latitude * (100 - y) + poly4.latitude * y) / 100) * (100 - x) + ((poly2.latitude * (100 - y) + poly3.latitude * y) / 100) * x) / 100, (((poly1.longitude * (100 - x) + poly2.longitude * x) / 100) * (100 - y) + ((poly4.longitude * (100 - x) + poly3.longitude * x) / 100) * y) / 100);
-        me = mMap.addMarker(new MarkerOptions().position(lokace).title("Checkpoint").icon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp")).flat(true).anchor(0.5f,0.5f).draggable(true));
+        me = mMap.addMarker(new MarkerOptions().position(lokace).title("Checkpoint").icon(BitmapDescriptorFactory.fromAsset("checkpoint.bmp")).flat(true).anchor(0.5f, 0.5f).draggable(true));
     }
 
     public void setTime(int cas) {
@@ -56,12 +56,13 @@ public class Checkpoint {
 
         float[] results = new float[1];
         Location.distanceBetween(me.getPosition().latitude, me.getPosition().longitude, hrac.latitude, hrac.longitude, results);
-        if(results[0] <= 15) {
+        if (results[0] <= 15) {
             a = true;
             if (!capturing) me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_entered.bmp"));
         } else {
             a = false;
-            if (!capturing) me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_uncaptured.bmp"));
+            if (!capturing)
+                me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_uncaptured.bmp"));
         }
 
         return a;
@@ -85,8 +86,7 @@ public class Checkpoint {
                         capture = false;
                         GameplayActivity.checkPoints.checkList.remove(id);
                         System.out.println(GameplayActivity.checkPoints.checkList.size());
-                    }
-                    else if (inside(GameplayActivity.publicHrac.location)) {
+                    } else if (inside(GameplayActivity.publicHrac.location)) {
                         cas--;
                         System.out.println(Math.floor(cas / (time / 8d)));
                         me.setIcon(BitmapDescriptorFactory.fromAsset("checkpoint_" + (int) Math.floor(cas / (time / 8d)) + ".bmp"));

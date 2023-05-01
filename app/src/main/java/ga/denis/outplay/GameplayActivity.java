@@ -256,7 +256,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                         System.out.println("recieved eliminate");
 
 
-
                         if (Integer.parseInt(divided[1]) == playerID) {
                             System.out.println("dead");
                             runOnUiThread(new Runnable() {
@@ -499,7 +498,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                         if (cap) interactButton.setEnabled(false);
 
 
-
                         if (!PolyUtil.containsLocation(new LatLng(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude()), polygon.getPoints(), false)) {
                             inside = false;
 
@@ -510,7 +508,6 @@ public class GameplayActivity extends FragmentActivity implements OnMapReadyCall
                                         System.out.println("jedeeem");
                                         if (kick == 0) {
                                             changeAsync(("eliminate_" + playerID));
-
 
 
                                             runOnUiThread(new Runnable() {

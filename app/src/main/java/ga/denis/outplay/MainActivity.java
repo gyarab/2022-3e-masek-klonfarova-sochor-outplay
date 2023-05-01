@@ -41,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},1);;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        ;
 
 
         Button n = findViewById(R.id.newGame);
@@ -57,14 +59,14 @@ public class MainActivity extends AppCompatActivity {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 String name = text.getText().toString();
                 if (name.contains("_")) {
-                    Toast.makeText(getApplicationContext(),"Name must not contain an underscore", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Name must not contain an underscore", Toast.LENGTH_SHORT).show();
                 } else if (!name.equals("")) {
                     SocketHandler.setName(name);
                     Intent intent = new Intent(MainActivity.this, PlayspaceActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(getApplicationContext(),"You must choose a name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "You must choose a name", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -74,14 +76,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String name = text.getText().toString();
                 if (name.contains("_")) {
-                    Toast.makeText(getApplicationContext(),"Name must not contain an underscore", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Name must not contain an underscore", Toast.LENGTH_SHORT).show();
                 } else if (!name.equals("")) {
-                SocketHandler.setName(name);
-                Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
-                startActivity(intent);
-                finish();
+                    SocketHandler.setName(name);
+                    Intent intent = new Intent(MainActivity.this, ScannerActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
-                    Toast.makeText(getApplicationContext(),"You must choose a name", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "You must choose a name", Toast.LENGTH_SHORT).show();
                 }
             }
         });
